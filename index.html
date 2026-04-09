@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aikhoje Studios — Wedding Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #111010;
+  --cream: #faf7f2;
+  --stone: #8a8580;
+  --warmth: #c9a87c;
+  --warmth-light: #e3cba8;
+  --parchment: #f0ebe3;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 2.2rem 5rem;
+  transition: padding .4s, background .4s, border-color .4s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(250,247,242,.96);
+  backdrop-filter: blur(12px);
+  padding: 1.2rem 5rem;
+  border-color: rgba(0,0,0,.06);
+}
+.logo {
+  font-family: 'Libre Caslon Display', serif;
+  font-size: 1.1rem; letter-spacing: .08em;
+  color: #fff; text-decoration: none; transition: color .4s;
+}
+nav.scrolled .logo { color: var(--ink); }
+.nav-links { display: flex; gap: 3rem; list-style: none; }
+.nav-links a {
+  font-size: .62rem; letter-spacing: .28em; text-transform: uppercase;
+  color: rgba(255,255,255,.5); text-decoration: none; transition: color .3s;
+  font-weight: 300;
+}
+nav.scrolled .nav-links a { color: var(--stone); }
+.nav-links a:hover { color: var(--warmth) !important; }
+
+/* ── HERO ── */
+.hero {
+  height: 100vh; min-height: 700px;
+  position: relative; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; text-align: center;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: url('images/dscf0552-2.jpg') center 40% / cover no-repeat;
+  animation: heroZoom 20s ease-out forwards;
+}
+@keyframes heroZoom { from { transform: scale(1.06); } to { transform: scale(1); } }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,9,8,.2) 0%, rgba(10,9,8,.55) 60%, rgba(10,9,8,.8) 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  animation: fadeUp 1.2s ease-out .3s both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-eyebrow {
+  font-size: .58rem; letter-spacing: .45em; text-transform: uppercase;
+  color: var(--warmth-light); margin-bottom: 1.8rem;
+}
+.hero-title {
+  font-family: 'Libre Caslon Display', serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 400; line-height: 1.05; color: #fff;
+  margin-bottom: 1.8rem;
+}
+.hero-title em { font-style: italic; color: var(--warmth-light); }
+.hero-sub {
+  font-size: .9rem; color: rgba(255,255,255,.45);
+  line-height: 1.9; max-width: 440px; margin: 0 auto 3rem;
+}
+.hero-btn {
+  display: inline-block; padding: .9rem 3rem;
+  border: 1px solid rgba(255,255,255,.35); color: #fff;
+  text-decoration: none; font-size: .6rem; letter-spacing: .25em; text-transform: uppercase;
+  transition: all .35s;
+}
+.hero-btn:hover { background: #fff; color: var(--ink); border-color: #fff; }
+
+/* ── INTRO STRIP ── */
+.intro {
+  display: grid; grid-template-columns: 1fr 1fr;
+  min-height: 520px;
+}
+.intro-text {
+  padding: 6rem 5rem;
+  display: flex; flex-direction: column; justify-content: center;
+  background: var(--ink);
+}
+.eyebrow {
+  font-size: .58rem; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--warmth); margin-bottom: 1.2rem;
+}
+.section-title {
+  font-family: 'Libre Caslon Display', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 400; line-height: 1.25; margin-bottom: 1.5rem;
+}
+.intro-text .section-title { color: #fff; }
+.intro-text p {
+  font-size: .88rem; line-height: 2; color: rgba(255,255,255,.4);
+  max-width: 420px;
+}
+.intro-img { overflow: hidden; }
+.intro-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .9s ease;
+}
+.intro-img:hover img { transform: scale(1.03); }
+
+/* ── VIDEO ── */
+.video-section {
+  padding: 7rem 5rem; background: var(--cream); text-align: center;
+}
+.video-section .section-title { margin-bottom: .8rem; }
+.video-sub {
+  font-size: .85rem; color: var(--stone); margin-bottom: 3rem; line-height: 1.8;
+}
+.video-wrap {
+  position: relative; max-width: 960px; margin: 0 auto;
+  border-radius: 2px; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.12);
+}
+.video-wrap video {
+  width: 100%; display: block;
+}
+
+/* ── GALLERY ── */
+.gallery { padding: 7rem 0; background: var(--parchment); }
+.gallery-header { text-align: center; padding: 0 2rem 4rem; }
+.gallery-header .section-title { color: var(--ink); }
+.gallery-sub { font-size: .85rem; color: var(--stone); margin-top: .6rem; }
+
+.masonry {
+  columns: 3; column-gap: 6px; padding: 0 6px;
+}
+.masonry-item {
+  break-inside: avoid; margin-bottom: 6px;
+  overflow: hidden; cursor: pointer; position: relative;
+}
+.masonry-item img {
+  width: 100%; display: block;
+  transition: transform .7s ease;
+}
+.masonry-item:hover img { transform: scale(1.04); }
+
+/* ── SECOND VIDEO ── */
+.video-section-2 {
+  padding: 6rem 5rem; background: var(--ink); text-align: center;
+}
+.video-section-2 .eyebrow { color: var(--warmth); }
+.video-section-2 .section-title { color: #fff; margin-bottom: 2.5rem; }
+.video-wrap-2 {
+  max-width: 800px; margin: 0 auto;
+  border-radius: 2px; overflow: hidden;
+}
+.video-wrap-2 video { width: 100%; display: block; }
+
+/* ── CTA ── */
+.cta {
+  padding: 9rem 5rem; text-align: center; background: var(--cream);
+}
+.cta .section-title { margin-bottom: 1rem; }
+.cta .section-title em { font-style: italic; color: var(--warmth); }
+.cta-sub {
+  font-size: .88rem; color: var(--stone); margin-bottom: 3rem; line-height: 1.8;
+}
+.cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-block; text-decoration: none;
+  font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
+  padding: .95rem 2.8rem; transition: all .35s;
+}
+.btn-warm { background: var(--warmth); color: #fff; }
+.btn-warm:hover { background: #b8935a; }
+.btn-outline { border: 1px solid var(--ink); color: var(--ink); }
+.btn-outline:hover { background: var(--ink); color: #fff; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink); padding: 2.2rem 5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+}
+.foot-logo {
+  font-family: 'Libre Caslon Display', serif;
+  font-size: .95rem; letter-spacing: .08em; color: rgba(255,255,255,.35);
+}
+footer small { font-size: .6rem; color: rgba(255,255,255,.2); letter-spacing: .05em; }
+footer a { font-size: .6rem; color: rgba(255,255,255,.3); text-decoration: none; transition: color .3s; }
+footer a:hover { color: var(--warmth); }
+
+/* ── LIGHTBOX ── */
+#lightbox {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(5,4,3,.96);
+  display: none; align-items: center; justify-content: center;
+  cursor: zoom-out;
+}
+#lightbox.active { display: flex; }
+#lightbox img {
+  max-width: 92vw; max-height: 90vh; object-fit: contain;
+}
+#lb-close {
+  position: absolute; top: 1.5rem; right: 2rem;
+  background: none; border: none; color: rgba(255,255,255,.45);
+  font-size: 2rem; cursor: pointer; transition: color .2s;
+}
+#lb-close:hover { color: #fff; }
+#lb-prev, #lb-next {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: rgba(255,255,255,.35);
+  font-size: 2.5rem; cursor: pointer; transition: color .2s; padding: 1rem;
+}
+#lb-prev { left: 1rem; }
+#lb-next { right: 1rem; }
+#lb-prev:hover, #lb-next:hover { color: #fff; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav, nav.scrolled { padding: 1rem 1.5rem; }
+  .intro { grid-template-columns: 1fr; }
+  .intro-text { padding: 4rem 2rem; }
+  .masonry { columns: 2; }
+  .video-section, .video-section-2 { padding: 5rem 1.5rem; }
+  .cta { padding: 6rem 2rem; }
+  footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+}
+@media (max-width: 560px) {
+  .masonry { columns: 1; }
+  .hero-title { font-size: 2.4rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo">Aikhoje Studios</a>
+  <ul class="nav-links">
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#film">Film</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Wedding Photography &amp; Film</p>
+    <h1 class="hero-title">Love told<br><em>beautifully.</em></h1>
+    <p class="hero-sub">Intimate, editorial wedding photography for couples who want their day remembered as it felt — not just as it looked.</p>
+    <a href="#gallery" class="hero-btn">View the Work</a>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro-text">
+    <p class="eyebrow">The Approach</p>
+    <h2 class="section-title">Every couple.<br>Every culture.<br>Every moment.</h2>
+    <p>With over a decade behind the lens, I bring an editorial eye and a documentary heart to every wedding. From South Asian ceremonies to intimate elopements, vineyard celebrations to golden-hour hilltop vows — I'm here to tell the story the way it actually unfolded.</p>
+  </div>
+  <div class="intro-img">
+    <img src="images/dscf0500.jpg" alt="Golden hour couple portrait" loading="lazy">
+  </div>
+</section>
+
+<!-- VIDEO REEL -->
+<section class="video-section" id="film">
+  <p class="eyebrow">Wedding Film</p>
+  <h2 class="section-title">The Reel</h2>
+  <p class="video-sub">A glimpse into how I see your day.</p>
+  <div class="video-wrap">
+    <video controls preload="metadata" poster="images/dscf0599.jpg">
+      <source src="video/reel.mp4" type="video/mp4">
+    </video>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="gallery-header">
+    <p class="eyebrow">Selected Work</p>
+    <h2 class="section-title">The Gallery</h2>
+    <p class="gallery-sub">Weddings, elopements, and love stories across cultures.</p>
+  </div>
+  <div class="masonry" id="masonry">
+    <div class="masonry-item"><img src="images/dscf0486.jpg" alt="Bride with bouquet at golden hour" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/1b4a6176.jpg" alt="Couple portrait in forest" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/untitled-31.jpg" alt="South Asian bridal jewelry" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0559.jpg" alt="Couple embrace at sunset" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/signal-2022-10-03-162349_002.jpg" alt="Traditional ceremony" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/8.jpg" alt="Couple laughing together" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/aw-197.jpg" alt="Kiss in garden with bouquet" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0604.jpg" alt="First dance under string lights" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0309.jpg" alt="Hilltop ceremony with autumn vista" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/untitled-84-2.jpg" alt="Bridal silhouette" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/196.jpg" alt="Tender moment between couple" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/7.jpg" alt="Bride smiling through greenery" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0599.jpg" alt="Reception tent at dusk" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/untitled-23.jpg" alt="Bridesmaids placing headpiece" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/wedding-380.jpg" alt="Bridal party walking" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0048.jpg" alt="Rings on dress" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/aw-190.jpg" alt="Black and white forehead kiss" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/20191019-dscf0340.jpg" alt="Couple in woodland" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/9344835903_50e22f1f0e_o.jpg" alt="Bridesmaids in green" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0427.jpg" alt="Groom portrait at golden hour" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/4.jpg" alt="Flower girl with bouquet" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0614-2.jpg" alt="First dance black and white" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/0-1.jpg" alt="Marriage certificate and ring" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/trix400_2017-08-22-0020.jpg" alt="Film ceremony" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0031.jpg" alt="Centerpiece with sunflowers" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/dscf0084.jpg" alt="Ceremony site with vista" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/aw-146.jpg" alt="Intimate couple moment" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/0-104.jpg" alt="Bridal detail" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/311.jpg" alt="Post-ceremony celebration" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/20191019-dscf0491.jpg" alt="Woodland kiss" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- SECOND VIDEO -->
+<section class="video-section-2">
+  <p class="eyebrow">Behind the Moments</p>
+  <h2 class="section-title">Wedding Day Film</h2>
+  <div class="video-wrap-2">
+    <video controls preload="metadata" poster="images/dscf0604.jpg">
+      <source src="video/wedding.mp4" type="video/mp4">
+    </video>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+  <p class="eyebrow">Let's Talk</p>
+  <h2 class="section-title">Your story deserves<br>to be told <em>well.</em></h2>
+  <p class="cta-sub">Currently booking weddings and elopements. Based in North Carolina, available worldwide.</p>
+  <div class="cta-btns">
+    <a href="mailto:aikhojestudios@gmail.com" class="btn btn-warm">Inquire About Your Date</a>
+    <a href="mailto:aikhojestudios@gmail.com" class="btn btn-outline">aikhojestudios@gmail.com</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="foot-logo">Aikhoje Studios</span>
+  <small>&copy; 2025 Aikhoje Studios &middot; Wedding &amp; Portrait Photography</small>
+  <a href="mailto:aikhojestudios@gmail.com">aikhojestudios@gmail.com</a>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lb-close" aria-label="Close">&times;</button>
+  <button id="lb-prev" aria-label="Previous">&#8249;</button>
+  <button id="lb-next" aria-label="Next">&#8250;</button>
+</div>
+
+<script>
+// Nav scroll
+window.addEventListener('scroll', function() {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Lightbox with prev/next
+var lb = document.getElementById('lightbox');
+var items = document.querySelectorAll('.masonry-item img');
+var currentIdx = 0;
+
+items.forEach(function(img, i) {
+  img.parentElement.addEventListener('click', function() {
+    currentIdx = i;
+    showImage(i);
+  });
+});
+
+function showImage(idx) {
+  var existing = lb.querySelector('img.lb-img');
+  if (existing) existing.remove();
+  var img = document.createElement('img');
+  img.className = 'lb-img';
+  img.src = items[idx].src;
+  img.alt = '';
+  lb.insertBefore(img, lb.firstChild);
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('lb-close').addEventListener('click', closeLb);
+document.getElementById('lb-prev').addEventListener('click', function(e) {
+  e.stopPropagation();
+  currentIdx = (currentIdx - 1 + items.length) % items.length;
+  showImage(currentIdx);
+});
+document.getElementById('lb-next').addEventListener('click', function(e) {
+  e.stopPropagation();
+  currentIdx = (currentIdx + 1) % items.length;
+  showImage(currentIdx);
+});
+lb.addEventListener('click', function(e) {
+  if (e.target === lb || e.target.classList.contains('lb-img')) closeLb();
+});
+
+function closeLb() {
+  lb.classList.remove('active');
+  document.body.style.overflow = '';
+  var img = lb.querySelector('img.lb-img');
+  if (img) img.remove();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (!lb.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') { currentIdx = (currentIdx - 1 + items.length) % items.length; showImage(currentIdx); }
+  if (e.key === 'ArrowRight') { currentIdx = (currentIdx + 1) % items.length; showImage(currentIdx); }
+});
+</script>
+</body>
+</html>
