@@ -40,7 +40,7 @@ AREAS = [
             ("Beach ceremony permits", "Each Outer Banks town sets its own rules for beach weddings. Check with your town, rental company, or planner early; I am happy to help you think through timing."),
             ("Beach-house weddings", "Rental-home celebrations are an Outer Banks tradition. I photograph getting ready, the ceremony, and the reception all in one place, which leaves more time for portraits."),
         ],
-        "gallery": ["film-beach-couple", "film-beach-kiss-bw", "dscf0559", "untitled-84-2", "dscf0497-2", "118", "dscf0486", "aw-190", "dscf0604", "film-hands-bw", "8", "dscf0614-2"],
+        "gallery": ["film-beach-couple", "film-beach-kiss-bw", "dscf0559", "untitled-84-2", "dscf0497-2", "118", "dscf0486", "aw-190", "dscf0604", "film-hands-color", "8", "dscf0614-2"],
     },
     {
         "slug": "virginia-beach-wedding-photographer",
@@ -103,7 +103,7 @@ AREAS = [
             "Richmond weddings run from black-tie ballrooms to industrial warehouse parties, garden ceremonies, and riverside celebrations. It is a city with real character, and I love a wedding that leans into it.",
             "I photograph and film Richmond weddings with an editorial eye for the architecture and a documentary heart for the people, so the gallery feels like your day in your city, not a template.",
         ],
-        "intro_img": "1b4a6176",
+        "intro_img": "vineyard-kiss-closeup",
         "notes_h": "Planning a Richmond wedding.",
         "notes_copy": "A few things I talk through with Richmond couples.",
         "notes": [
@@ -112,7 +112,7 @@ AREAS = [
             ("Summer heat", "July and August can be hot and humid. I plan shaded portrait spots and lean on evening light so everyone stays comfortable."),
             ("Every tradition", "Richmond weddings often blend cultures and traditions. I have photographed ceremonies of many faiths and backgrounds and plan coverage around each one."),
         ],
-        "gallery": ["dscf0604", "1b4a6176", "untitled-31", "signal-2022-10-03-162349_002", "dscf0614-2", "7", "196", "untitled-23", "0-1", "dscf0427", "9344835903_50e22f1f0e_o", "aw-146"],
+        "gallery": ["dscf0604", "vineyard-kiss-closeup", "untitled-31", "signal-2022-10-03-162349_002", "dscf0614-2", "7", "196", "untitled-23", "0-1", "dscf0427", "9344835903_50e22f1f0e_o", "aw-146"],
     },
     {
         "slug": "raleigh-durham-wedding-photographer",
@@ -136,7 +136,7 @@ AREAS = [
             ("Warehouse and downtown venues", "Brick, steel, and big windows suit an editorial look. I bring lighting for receptions so evening coverage stays clean and true to color."),
             ("Spring and fall", "April, May, October, and November are the busiest months in the Triangle. Pollen season in early spring is worth knowing about for outdoor ceremonies."),
         ],
-        "gallery": ["dscf0309", "1b4a6176", "20191019-dscf0340", "20191019-dscf0491", "film-couple-steps", "dscf0084", "dscf0031", "untitled-23", "7", "4", "trix400_2017-08-22-0020", "dscf0599"],
+        "gallery": ["dscf0309", "vineyard-kiss-closeup", "20191019-dscf0340", "20191019-dscf0491", "film-couple-steps", "dscf0084", "dscf0031", "untitled-23", "7", "4", "trix400_2017-08-22-0020", "dscf0599"],
     },
     {
         "slug": "wilmington-wedding-photographer",
@@ -160,7 +160,7 @@ AREAS = [
             ("Riverfront evenings", "Downtown along the Cape Fear River is lovely after dark. A few evening portraits with the lights on the water make a great close to the day."),
             ("Hurricane season", "Late summer and early fall carry some storm risk on the coast. I always talk through a backup plan for outdoor ceremonies."),
         ],
-        "gallery": ["dscf0497-2", "film-beach-couple", "film-beach-kiss-bw", "dscf0559", "aw-197", "film-bride-bouquet", "untitled-84-2", "118", "dscf0486", "aw-190", "311", "film-hands-bw"],
+        "gallery": ["dscf0497-2", "film-beach-couple", "film-beach-kiss-bw", "dscf0559", "aw-197", "film-bride-bouquet", "untitled-84-2", "118", "dscf0486", "aw-190", "311", "film-hands-color"],
     },
 ]
 
