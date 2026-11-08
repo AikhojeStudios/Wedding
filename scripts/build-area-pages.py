@@ -170,7 +170,7 @@ src = (ROOT / "index.html").read_text()
 style = re.search(r"<style>.*?</style>", src, re.S).group(0)
 style = style.replace('url("fonts/', 'url("/fonts/')
 font_preloads = "\n".join(re.findall(r'<link rel="preload" href="fonts/[^>]+>', src)).replace('href="fonts/', 'href="/fonts/')
-verification = re.search(r'<meta name="google-site-verification"[^>]+>', src).group(0)
+verification = "\n".join(re.findall(r'<meta name="(?:google-site-verification|p:domain_verify)"[^>]+>', src))
 
 gallery_items = {}
 for li in re.findall(r'<li><button type="button" class="masonry-item".*?</li>', src):
