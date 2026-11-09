@@ -707,6 +707,21 @@ footer a:hover { color: var(--warmth-light); }
 .review figure { height: 100%; margin: 0; display: flex; flex-direction: column; gap: 1.2rem; padding: 2.4rem 2.2rem; border: 1px solid rgba(227, 203, 168, .22); }
 .review blockquote { margin: 0; flex: 1; }
 .review-photo { display: block; width: calc(100% + 4.4rem); max-width: none; margin: -2.4rem -2.2rem .2rem; aspect-ratio: 3 / 2; height: auto; object-fit: cover; }
+/* ── FAQ ── */
+.faq { background: var(--parchment); padding: 7rem 1.5rem; text-align: center; }
+.faq .section-title em { font-style: italic; color: var(--warmth-deep); }
+.faq-list { max-width: 760px; margin: 2.5rem auto 0; text-align: left; border-top: 1px solid rgba(17,16,16,.15); }
+.faq-item { border-bottom: 1px solid rgba(17,16,16,.15); }
+.faq-item summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.5rem 0; font-family: "Libre Caslon Display", serif; font-size: 1.2rem; line-height: 1.4; color: var(--ink); }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; flex: none; font-family: inherit; font-size: 1.5rem; line-height: 1; color: var(--warmth-deep); transition: transform .3s ease; }
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item summary:focus-visible { outline: 2px solid var(--warmth-deep); outline-offset: 4px; }
+.faq-item p { padding: 0 2.5rem 1.6rem 0; font-size: .98rem; line-height: 1.85; color: var(--stone); }
+.faq-more { margin-top: 2.5rem; font-size: .95rem; color: var(--stone); }
+.faq-more a { color: var(--warmth-deep); }
+@media (max-width: 560px) { .faq { padding: 5rem 1.25rem; } .faq-item summary { font-size: 1.08rem; } .faq-item p { padding-right: 0; } }
+
 @media (max-width: 900px) { .review-photo { width: calc(100% + 3.2rem); margin: -2rem -1.6rem .2rem; } }
 
 .review blockquote p { font-family: "Libre Caslon Display", serif; font-size: 1.12rem; line-height: 1.65; color: #fff; }
@@ -787,6 +802,79 @@ footer a:hover { color: var(--warmth-light); }
   }
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://aikhojestudios.com/#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How far in advance should we book you for our wedding?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most couples book 9 to 12 months ahead, and spring and fall Saturdays go first. Shorter notice is welcome too, so if your date is coming up soon, send an inquiry and I will tell you right away if I am available. I reply to every inquiry within 24 hours."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you also offer video?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Photo and film come from one team, so your gallery and your film share one plan, one timeline and one look. The Photo + Video Collection includes a 3 to 5 minute cinematic highlight film, elopements can add a short film, and I also shoot Super 8 and 16mm motion film for a timeless keepsake reel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you shoot film?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Alongside digital coverage I shoot 35mm and medium format film and develop it in my own lab, and I offer Super 8 and 16mm motion film. Film can be added to any collection for the grain, color and timeless feel that only real film gives."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long will it take to see our pictures?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your fully edited gallery and film are delivered within four weeks, and often sooner. Every image is individually edited and color-graded, and you receive an online gallery to share with family plus a print release."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many pictures will we get?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no fixed number, because every wedding is different. A long day with a big family and a full reception naturally produces more than a small elopement. You receive a fully edited gallery with every moment worth keeping, and nothing held back to sell later."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you work with assistants or other photographers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "I lead and photograph every wedding myself. For bigger days, the Two-Photographer and Photo + Video collections add a second shooter or a filmmaker, so both sides of the getting-ready, the ceremony and the dance floor are covered."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's your backup plan if you can't photograph our wedding?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In 11 years, I have never missed a wedding. Still, you are covered: I have a team of photographers I have worked with for over 10 years, plus a wide network of trusted professionals ready to step in if there is ever an emergency, so your day is photographed no matter what."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you have insurance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Aikhoje Studios is fully insured. If your venue needs a certificate of insurance, just let me know and I will send it over."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -994,6 +1082,46 @@ footer a:hover { color: var(--warmth-light); }
       <source src="video/wedding.mp4" type="video/mp4">
     </video>
   </div>
+</section>
+
+<section class="faq" id="faq" aria-labelledby="faq-title">
+  <p class="eyebrow">Good to know</p>
+  <h2 id="faq-title" class="section-title">Questions couples <em>ask</em></h2>
+  <div class="faq-list">
+    <details class="faq-item" open>
+      <summary>How far in advance should we book you for our wedding?</summary>
+      <p>Most couples book 9 to 12 months ahead, and spring and fall Saturdays go first. Shorter notice is welcome too, so if your date is coming up soon, send an inquiry and I will tell you right away if I am available. I reply to every inquiry within 24 hours.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Do you also offer video?</summary>
+      <p>Yes. Photo and film come from one team, so your gallery and your film share one plan, one timeline and one look. The Photo + Video Collection includes a 3 to 5 minute cinematic highlight film, elopements can add a short film, and I also shoot Super 8 and 16mm motion film for a timeless keepsake reel.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Do you shoot film?</summary>
+      <p>Yes. Alongside digital coverage I shoot 35mm and medium format film and develop it in my own lab, and I offer Super 8 and 16mm motion film. Film can be added to any collection for the grain, color and timeless feel that only real film gives.</p>
+    </details>
+    <details class="faq-item">
+      <summary>How long will it take to see our pictures?</summary>
+      <p>Your fully edited gallery and film are delivered within four weeks, and often sooner. Every image is individually edited and color-graded, and you receive an online gallery to share with family plus a print release.</p>
+    </details>
+    <details class="faq-item">
+      <summary>How many pictures will we get?</summary>
+      <p>There is no fixed number, because every wedding is different. A long day with a big family and a full reception naturally produces more than a small elopement. You receive a fully edited gallery with every moment worth keeping, and nothing held back to sell later.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Do you work with assistants or other photographers?</summary>
+      <p>I lead and photograph every wedding myself. For bigger days, the Two-Photographer and Photo + Video collections add a second shooter or a filmmaker, so both sides of the getting-ready, the ceremony and the dance floor are covered.</p>
+    </details>
+    <details class="faq-item">
+      <summary>What&#x27;s your backup plan if you can&#x27;t photograph our wedding?</summary>
+      <p>In 11 years, I have never missed a wedding. Still, you are covered: I have a team of photographers I have worked with for over 10 years, plus a wide network of trusted professionals ready to step in if there is ever an emergency, so your day is photographed no matter what.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Do you have insurance?</summary>
+      <p>Yes, Aikhoje Studios is fully insured. If your venue needs a certificate of insurance, just let me know and I will send it over.</p>
+    </details>
+  </div>
+  <p class="faq-more">Something else on your mind? <a href="#contact">Ask me directly</a> &mdash; I reply within 24 hours.</p>
 </section>
 
 <section class="cta" id="contact" aria-labelledby="contact-title">
