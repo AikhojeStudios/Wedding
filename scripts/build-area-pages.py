@@ -393,6 +393,8 @@ for a in AREAS:
     print("wrote", out.relative_to(ROOT))
 
 urls = [(f"{SITE}/", "1.0")] + [(f"{SITE}/{a['slug']}/", "0.8") for a in AREAS]
+# Standalone sections that live alongside the wedding pages (not generated here).
+urls += [(f"{SITE}/real-estate/", "0.5")]
 sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
 for loc, pri in urls:
     sitemap += ["  <url>", f"    <loc>{loc}</loc>", f"    <lastmod>{TODAY}</lastmod>",
