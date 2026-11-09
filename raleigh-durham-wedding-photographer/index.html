@@ -681,6 +681,67 @@ footer a:hover { color: var(--warmth-light); }
 #lb-next { right: .4rem; }
 #lb-close:hover, #lb-prev:hover, #lb-next:hover { color: var(--warmth-light); }
 
+/* ── REVIEWS ── */
+.reviews { background: var(--ink); color: var(--on-dark); padding: 7rem 5rem; text-align: center; }
+.reviews .eyebrow { color: var(--warmth-light); }
+.reviews .section-title { color: #fff; }
+.reviews .section-title em { font-style: italic; color: var(--warmth-light); }
+.reviews-rating { font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.7); margin-bottom: 3.5rem; }
+.review-stars { color: var(--warmth); letter-spacing: .18em; font-size: .9rem; }
+.reviews-rating .review-stars { margin-right: .5rem; }
+.reviews-list { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; max-width: 1180px; margin: 0 auto; text-align: left; }
+.review figure { height: 100%; margin: 0; display: flex; flex-direction: column; gap: 1.2rem; padding: 2.4rem 2.2rem; border: 1px solid rgba(227, 203, 168, .22); }
+.review blockquote { margin: 0; flex: 1; }
+.review-photo { display: block; width: calc(100% + 4.4rem); max-width: none; margin: -2.4rem -2.2rem .2rem; aspect-ratio: 3 / 2; height: auto; object-fit: cover; }
+/* ── MEET ── */
+.meet { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); background: var(--cream); }
+.meet-photo { overflow: hidden; }
+.meet-photo img { display: block; width: 100%; height: 100%; min-height: 560px; object-fit: cover; object-position: center 30%; }
+.meet-text { padding: 6.5rem 5rem; align-self: center; max-width: 720px; }
+.meet .section-title em { font-style: italic; color: var(--warmth-deep); }
+.meet-text p { font-size: 1rem; line-height: 1.9; color: var(--stone); margin-bottom: 1.15rem; }
+.meet-facts { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 2rem; margin: 2.2rem 0 1.8rem; padding: 1.8rem 0; border-top: 1px solid rgba(17,16,16,.14); border-bottom: 1px solid rgba(17,16,16,.14); }
+.meet-facts li { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--stone); line-height: 1.5; }
+.meet-facts strong { display: block; font-family: "Libre Caslon Display", serif; font-weight: 400; font-size: 1.45rem; letter-spacing: 0; text-transform: none; color: var(--warmth-deep); margin-bottom: .15rem; }
+.meet-text .meet-sign { font-family: "Libre Caslon Display", serif; font-style: italic; font-size: 1.6rem; color: var(--ink); margin: 0; }
+@media (max-width: 900px) {
+  .meet { grid-template-columns: 1fr; }
+  .meet-photo img { min-height: 0; aspect-ratio: 4 / 5; }
+  .meet-text { padding: 4rem 1.5rem 4.5rem; }
+}
+/* ── FAQ ── */
+.faq { background: var(--parchment); padding: 7rem 1.5rem; text-align: center; }
+.faq .section-title em { font-style: italic; color: var(--warmth-deep); }
+.faq-list { max-width: 760px; margin: 2.5rem auto 0; text-align: left; border-top: 1px solid rgba(17,16,16,.15); }
+.faq-item { border-bottom: 1px solid rgba(17,16,16,.15); }
+.faq-item summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.5rem 0; font-family: "Libre Caslon Display", serif; font-size: 1.2rem; line-height: 1.4; color: var(--ink); }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; flex: none; font-family: inherit; font-size: 1.5rem; line-height: 1; color: var(--warmth-deep); transition: transform .3s ease; }
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item summary:focus-visible { outline: 2px solid var(--warmth-deep); outline-offset: 4px; }
+.faq-item p { padding: 0 2.5rem 1.6rem 0; font-size: .98rem; line-height: 1.85; color: var(--stone); }
+.faq-more { margin-top: 2.5rem; font-size: .95rem; color: var(--stone); }
+.faq-more a { color: var(--warmth-deep); }
+@media (max-width: 560px) { .faq { padding: 5rem 1.25rem; } .faq-item summary { font-size: 1.08rem; } .faq-item p { padding-right: 0; } }
+
+@media (max-width: 900px) { .review-photo { width: calc(100% + 3.2rem); margin: -2rem -1.6rem .2rem; } }
+
+.review blockquote p { font-family: "Libre Caslon Display", serif; font-size: 1.12rem; line-height: 1.65; color: #fff; }
+.review figcaption { display: flex; flex-direction: column; gap: .25rem; padding-top: 1.2rem; border-top: 1px solid rgba(227, 203, 168, .22); }
+.review-name { font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--warmth-light); }
+.review-meta { font-size: .82rem; color: rgba(255,255,255,.62); }
+.reviews-link { display: inline-block; margin-top: 3rem; font-size: .66rem; letter-spacing: .24em; text-transform: uppercase; color: #fff; text-decoration: none; padding: .95rem 2.2rem; border: 1px solid rgba(255,255,255,.45); transition: background .3s, color .3s; }
+.reviews-link:hover, .reviews-link:focus-visible { background: #fff; color: var(--ink); }
+@media (max-width: 900px) {
+  .reviews { padding: 5rem 0; }
+  .reviews .eyebrow, .reviews .section-title, .reviews-rating { padding: 0 1.5rem; }
+  .reviews-list { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding: 0 1.5rem 1rem; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .reviews-list::-webkit-scrollbar { display: none; }
+  .review { flex: 0 0 82%; scroll-snap-align: center; }
+  .review figure { padding: 2rem 1.6rem; }
+  .review blockquote p { font-size: 1.02rem; }
+}
+
 @media (max-width: 900px) {
   nav, nav.scrolled { padding: 1rem 1.25rem; }
   .intro { grid-template-columns: 1fr; }
@@ -1134,5 +1195,6 @@ footer a:hover { color: var(--warmth-light); }
   });
 })();
 </script>
+<script data-goatcounter="https://aikhojestudios.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
