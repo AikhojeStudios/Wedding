@@ -695,6 +695,33 @@ footer a:hover { color: var(--warmth-light); }
 #lb-next { right: .4rem; }
 #lb-close:hover, #lb-prev:hover, #lb-next:hover { color: var(--warmth-light); }
 
+/* ── REVIEWS ── */
+.reviews { background: var(--ink); color: var(--on-dark); padding: 7rem 5rem; text-align: center; }
+.reviews .eyebrow { color: var(--warmth-light); }
+.reviews .section-title { color: #fff; }
+.reviews .section-title em { font-style: italic; color: var(--warmth-light); }
+.reviews-rating { font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.7); margin-bottom: 3.5rem; }
+.review-stars { color: var(--warmth); letter-spacing: .18em; font-size: .9rem; }
+.reviews-rating .review-stars { margin-right: .5rem; }
+.reviews-list { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; max-width: 1180px; margin: 0 auto; text-align: left; }
+.review figure { height: 100%; margin: 0; display: flex; flex-direction: column; gap: 1.2rem; padding: 2.4rem 2.2rem; border: 1px solid rgba(227, 203, 168, .22); }
+.review blockquote { margin: 0; flex: 1; }
+.review blockquote p { font-family: "Libre Caslon Display", serif; font-size: 1.12rem; line-height: 1.65; color: #fff; }
+.review figcaption { display: flex; flex-direction: column; gap: .25rem; padding-top: 1.2rem; border-top: 1px solid rgba(227, 203, 168, .22); }
+.review-name { font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--warmth-light); }
+.review-meta { font-size: .82rem; color: rgba(255,255,255,.62); }
+.reviews-link { display: inline-block; margin-top: 3rem; font-size: .66rem; letter-spacing: .24em; text-transform: uppercase; color: #fff; text-decoration: none; padding: .95rem 2.2rem; border: 1px solid rgba(255,255,255,.45); transition: background .3s, color .3s; }
+.reviews-link:hover, .reviews-link:focus-visible { background: #fff; color: var(--ink); }
+@media (max-width: 900px) {
+  .reviews { padding: 5rem 0; }
+  .reviews .eyebrow, .reviews .section-title, .reviews-rating { padding: 0 1.5rem; }
+  .reviews-list { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding: 0 1.5rem 1rem; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .reviews-list::-webkit-scrollbar { display: none; }
+  .review { flex: 0 0 82%; scroll-snap-align: center; }
+  .review figure { padding: 2rem 1.6rem; }
+  .review blockquote p { font-size: 1.02rem; }
+}
+
 @media (max-width: 900px) {
   nav, nav.scrolled { padding: 1rem 1.25rem; }
   .intro { grid-template-columns: 1fr; }
@@ -908,6 +935,36 @@ footer a:hover { color: var(--warmth-light); }
             <li><button type="button" class="masonry-item" data-full="images/untitled-32.jpg"><img src="images/untitled-32.jpg" srcset="images/opt/untitled-32-640.webp 640w, images/opt/untitled-32-1200.webp 1200w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" width="1200" height="787" alt="Mother helping bride with necklace" loading="lazy" decoding="async"></button></li>
             <li><button type="button" class="masonry-item" data-full="images/film-beach-couple.jpg"><img src="images/film-beach-couple.jpg" srcset="images/opt/film-beach-couple-640.webp 640w, images/opt/film-beach-couple-1200.webp 1200w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" width="1600" height="900" alt="Couple on beach at golden hour" loading="lazy" decoding="async"></button></li>
   </ul>
+</section>
+
+<section class="reviews" id="reviews" aria-labelledby="reviews-title">
+  <p class="eyebrow">Kind words</p>
+  <h2 id="reviews-title" class="section-title">From couples <em>&amp; colleagues</em></h2>
+  <p class="reviews-rating"><span class="review-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 5.0 on Google</p>
+  <ul class="reviews-list">
+    <li class="review">
+      <figure>
+        <span class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <blockquote><p>When my wife and I needed a wedding photographer for our small intimate ceremony, we reached out to Aikhoje Studios and couldn&rsquo;t have been happier. They were incredibly professional from the very first conversation. Communication was clear and responsive, they were organized and on time, and they made the whole process easy. On the day, they were calm and respectful, and they knew exactly how to work in an intimate setting without taking over. It&rsquo;s rare to find someone this skilled who is also this great to work with. Highly recommend!</p></blockquote>
+        <figcaption><span class="review-name">Martin G.</span><span class="review-meta">Intimate wedding</span></figcaption>
+      </figure>
+    </li>
+    <li class="review">
+      <figure>
+        <span class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <blockquote><p>Beyond pleased with the photography services provided for my wedding! So professional, timely and my pictures were stunning.</p></blockquote>
+        <figcaption><span class="review-name">Ohenewaa</span><span class="review-meta">Wedding</span></figcaption>
+      </figure>
+    </li>
+    <li class="review">
+      <figure>
+        <span class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <blockquote><p>We&rsquo;ve worked with them several times for both photo and video shoots, and every time has been a great experience. They&rsquo;re professional, easy to coordinate with, and the results are always top-notch. Highly recommend!</p></blockquote>
+        <figcaption><span class="review-name">New England Wedding Film</span><span class="review-meta">Fellow wedding vendor</span></figcaption>
+      </figure>
+    </li>
+  </ul>
+  <a class="reviews-link" href="https://maps.google.com/?cid=2370023642542401137" rel="noopener" target="_blank">Read all reviews on Google</a>
 </section>
 
 <section class="video-section" id="film" aria-labelledby="film-title">
