@@ -36,7 +36,11 @@
         { "@type": "Place", "name": "Hampton Roads, Virginia" }
       ],
       "offers": [
-        { "@type": "Offer", "name": "Interior photography", "price": "175", "priceCurrency": "USD" },
+        { "@type": "Offer", "name": "Listing photography, under 2,000 sq ft", "price": "175", "priceCurrency": "USD" },
+        { "@type": "Offer", "name": "Listing photography, 2,000–3,000 sq ft", "price": "225", "priceCurrency": "USD" },
+        { "@type": "Offer", "name": "Listing photography, 3,000–4,500 sq ft (floor plan included)", "price": "295", "priceCurrency": "USD" },
+        { "@type": "Offer", "name": "Listing photography, 4,500+ sq ft (floor plan included)", "priceSpecification": { "@type": "PriceSpecification", "minPrice": "375", "priceCurrency": "USD" } },
+        { "@type": "Offer", "name": "Real twilight session", "price": "100", "priceCurrency": "USD" },
         { "@type": "Offer", "name": "Video walkthrough", "price": "200", "priceCurrency": "USD" }
       ]
     },
@@ -233,6 +237,10 @@ nav.on .nav-links a { color: var(--mid); }
   transition: background .3s;
 }
 .svc:hover { background: #fff; }
+.svc-tiers { list-style: none; margin-top: 1.3rem; border-top: 1px solid #ddd8ce; }
+.svc-tiers li { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-bottom: 1px solid #ddd8ce; font-size: .85rem; color: var(--mid); }
+.svc-tiers li span:last-child { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--gold); line-height: 1; }
+.svc-note { margin-top: .8rem; font-size: .75rem; letter-spacing: .04em; color: var(--mid); font-style: italic; }
 .svc:last-child:nth-child(3n+2) { grid-column: span 2; }
 @media (max-width: 900px) { .svc:last-child:nth-child(3n+2) { grid-column: auto; } }
 .svc-n {
@@ -463,10 +471,17 @@ footer a:hover { color: var(--gold); }
     <h2 class="section-h2">Services &amp; Pricing</h2>
   </div>
   <div class="svc-grid">
-    <div class="svc"><div class="svc-n">01</div><div class="svc-name">Interior Photography</div><div class="svc-desc">HDR-blended interiors using the flambient technique. Perfectly balanced light — no blown windows, no dark corners.</div><div class="svc-price">From $175</div></div>
-    <div class="svc"><div class="svc-n">02</div><div class="svc-name">Exterior &amp; Curb Appeal</div><div class="svc-desc">Crisp exterior shots showcasing the home's best angles, landscaping, and architecture. Twilight sessions available.</div><div class="svc-price">Included &middot; Twilight +$100</div></div>
+    <div class="svc"><div class="svc-n">01</div><div class="svc-name">Listing Photography</div><div class="svc-desc">Interiors and exteriors, HDR-blended with the flambient technique. Perfectly balanced light — no blown windows, no dark corners.</div>
+      <ul class="svc-tiers">
+        <li><span>Under 2,000 sq ft</span><span>$175</span></li>
+        <li><span>2,000–3,000 sq ft</span><span>$225</span></li>
+        <li><span>3,000–4,500 sq ft</span><span>$295</span></li>
+        <li><span>4,500+ sq ft</span><span>From $375</span></li>
+      </ul>
+      <div class="svc-note">Floor plan included from 3,000 sq ft</div></div>
+    <div class="svc"><div class="svc-n">02</div><div class="svc-name">Real Twilight Session</div><div class="svc-desc">Shot on location at dusk, with real sky and real interior glow — not a fake-sky edit. The frames that stop the scroll on Zillow.</div><div class="svc-price">Add-on: +$100</div></div>
     <div class="svc"><div class="svc-n">03</div><div class="svc-name">Video Walkthrough</div><div class="svc-desc">Cinematic 4K property tours for MLS, social media, and virtual showings. Full-length tour plus short-form cuts.</div><div class="svc-price">From $200</div></div>
-    <div class="svc"><div class="svc-n">04</div><div class="svc-name">Floor Plans</div><div class="svc-desc">Clean 2D floor plans with room labels and dimensions — delivered as print-ready PDF and web JPEG.</div><div class="svc-price">Add-on: +$75</div></div>
+    <div class="svc"><div class="svc-n">04</div><div class="svc-name">Floor Plans</div><div class="svc-desc">Clean 2D floor plans with room labels and dimensions — delivered as print-ready PDF and web JPEG.</div><div class="svc-price">Add-on: +$75</div><div class="svc-note">Included free from 3,000 sq ft</div></div>
     <div class="svc"><div class="svc-n">05</div><div class="svc-name">Full Listing Package</div><div class="svc-desc">Photography, twilight, video walkthrough, and floor plan. Everything an agent needs for MLS, Zillow, and social — in 24 hours.</div><div class="svc-price">Custom Quote</div></div>
   </div>
 </section>
@@ -510,10 +525,10 @@ footer a:hover { color: var(--gold); }
       <div class="field"><label for="re-size">Approx. size</label>
         <select id="re-size" name="Approx. Size" required>
           <option value="" disabled selected>Choose one</option>
-          <option>Under 1,500 sq ft</option>
-          <option>1,500–2,500 sq ft</option>
-          <option>2,500–4,000 sq ft</option>
-          <option>4,000+ sq ft</option>
+          <option>Under 2,000 sq ft</option>
+          <option>2,000–3,000 sq ft</option>
+          <option>3,000–4,500 sq ft</option>
+          <option>4,500+ sq ft</option>
           <option>Land / lot only</option>
         </select>
       </div>
@@ -521,7 +536,7 @@ footer a:hover { color: var(--gold); }
     <fieldset class="field services-pick">
       <legend>Services needed</legend>
       <label><input type="checkbox" name="Services" value="Photography" checked> Photography</label>
-      <label><input type="checkbox" name="Services" value="Twilight"> Twilight</label>
+      <label><input type="checkbox" name="Services" value="Real twilight"> Real twilight</label>
       <label><input type="checkbox" name="Services" value="Video walkthrough"> Video walkthrough</label>
       <label><input type="checkbox" name="Services" value="Floor plan"> Floor plan</label>
       <label><input type="checkbox" name="Services" value="Full listing package"> Full listing package</label>
