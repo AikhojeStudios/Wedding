@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Contract Builder · Aikhoje Studios</title>
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: "Libre Caslon Display";
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url("../../fonts/libre-caslon-display-latin.woff2") format("woff2");
+}
+:root {
+  /* Two-pane tool: options on the left, the live contract on the right. Prints the contract only. */
+  --ink: #1f1a16;
+  --brown: #5b4636;
+  --brown-soft: #8a7360;
+  --rule: #cdbfae;
+  --paper: #ffffff;
+  --desk: #efe9e1;
+  --panel: #faf7f2;
+  --muted: #6d6259;
+  --accent: #8a6236;
+  --warn-bg: #fff4d6;
+  --warn-ink: #6b4a00;
+  --display: "Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
+  --body: "Lato", "Carlito", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--desk); color: var(--ink); font-family: var(--body); font-size: 14px; }
+
+/* ── App layout ── */
+.app { display: grid; grid-template-columns: minmax(320px, 400px) minmax(0, 1fr); min-height: 100vh; }
+.controls { background: var(--panel); border-right: 1px solid var(--rule); padding: 1.25rem 1.25rem 4rem; height: 100vh; overflow-y: auto; position: sticky; top: 0; }
+.preview { padding: 2rem 1.5rem 4rem; min-width: 0; }
+.brand { font-family: var(--display); font-size: 1.35rem; letter-spacing: .04em; color: var(--brown); margin: 0 0 .15rem; }
+.sub { color: var(--muted); font-size: .85rem; margin: 0 0 1rem; }
+.toolbar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+button { font: inherit; cursor: pointer; border-radius: 6px; padding: .55rem .9rem; border: 1px solid var(--brown); background: #fff; color: var(--brown); }
+button.primary { background: var(--brown); color: #fff; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+fieldset { border: 1px solid var(--rule); border-radius: 8px; padding: .85rem .9rem 1rem; margin: 0 0 1rem; background: #fff; }
+legend { font-weight: 700; color: var(--brown); padding: 0 .35rem; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; }
+label { display: block; font-size: .8rem; color: var(--muted); margin: .55rem 0 .2rem; }
+input[type=text], input[type=email], input[type=tel], input[type=date], input[type=time], input[type=number], input[type=url], select, textarea {
+  width: 100%; font: inherit; font-size: .9rem; padding: .45rem .55rem; border: 1px solid var(--rule); border-radius: 6px; background: #fff; color: var(--ink);
+}
+textarea { min-height: 3.2rem; resize: vertical; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .6rem; }
+.check { display: flex; align-items: flex-start; gap: .5rem; margin: .45rem 0; font-size: .88rem; color: var(--ink); }
+.check input { margin-top: .2rem; }
+.check .amt { margin-left: auto; width: 6.2rem; flex: none; }
+.check .qty { width: 4.2rem; flex: none; }
+.hint { font-size: .78rem; color: var(--muted); margin: .35rem 0 0; line-height: 1.45; }
+.sum { background: var(--brown); color: #fff; border-radius: 8px; padding: .8rem .9rem; margin-bottom: 1rem; font-variant-numeric: tabular-nums; }
+.sum div { display: flex; justify-content: space-between; gap: 1rem; font-size: .85rem; margin: .15rem 0; }
+.sum .total { font-size: 1.05rem; font-weight: 700; border-top: 1px solid rgba(255,255,255,.35); padding-top: .35rem; margin-top: .4rem; }
+details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; }
+.flag { background: var(--warn-bg); color: var(--warn-ink); border-radius: 6px; padding: .5rem .6rem; font-size: .8rem; margin-top: .5rem; }
+.flag:empty { display: none; }
+
+/* ── Contract (screen) ── */
+.sheet { background: var(--paper); max-width: 8.5in; margin: 0 auto; padding: .8in .85in; box-shadow: 0 2px 18px rgba(60,40,20,.12); font-size: 10.5pt; line-height: 1.5; }
+.c h1 { font-family: var(--display); font-weight: 400; text-align: center; color: var(--brown); font-size: 26pt; letter-spacing: .06em; margin: 0; }
+.c .tag { text-align: center; font-style: italic; font-size: 13pt; margin: .1rem 0 .2rem; }
+.c .contact { text-align: center; color: var(--muted); font-size: 9pt; margin: 0 0 1.1rem; }
+.c h2 { font-family: var(--display); font-weight: 400; color: var(--brown); font-size: 13pt; letter-spacing: .03em; text-transform: uppercase; border-bottom: 1px solid var(--rule); padding-bottom: .15rem; margin: 1.35rem 0 .55rem; break-after: avoid; page-break-after: avoid; }
+.c h3 { font-size: 10.5pt; color: var(--brown); margin: 1rem 0 .35rem; break-after: avoid; }
+.c .center { text-align: center; }
+.c p { margin: .35rem 0; }
+.c table { width: 100%; border-collapse: collapse; margin: .4rem 0 .6rem; font-size: 9.5pt; font-variant-numeric: tabular-nums; }
+.c th { background: var(--brown); color: #fff; text-align: left; font-weight: 700; padding: .3rem .45rem; }
+.c td { border: 1px solid #9a8b7c; padding: .3rem .45rem; vertical-align: top; }
+.c tr { break-inside: avoid; page-break-inside: avoid; }
+.c td.num, .c th.num { text-align: right; white-space: nowrap; }
+.c tr.strong td { font-weight: 700; }
+.c .clause { display: grid; grid-template-columns: 2.4rem 1fr; gap: 0 .2rem; margin: .4rem 0; }
+.c .clause > b { font-weight: 700; }
+.c .clause ul { margin: .3rem 0 .2rem; padding-left: 1.2rem; }
+.c .clause li { margin: .15rem 0; }
+.c .note { font-style: italic; color: var(--muted); font-size: 9pt; }
+.c .blank { display: inline-block; min-width: 9rem; border-bottom: 1px solid var(--ink); }
+.c .paylinks { font-size: 8.5pt; line-height: 1.6; }
+.c .paylinks a { color: var(--brown); }
+.c .optout div { margin: .25rem 0 .25rem 1rem; }
+.c .sig { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; break-inside: avoid; page-break-inside: avoid; }
+.c .sig h4 { color: var(--brown); font-size: 10pt; margin: 0 0 .8rem; text-transform: uppercase; letter-spacing: .04em; }
+.c .sig p { margin: 0 0 1.1rem; }
+.c .initials { margin-top: .3rem; font-weight: 700; }
+.c .parties td { width: 50%; }
+.c .page-break { break-before: page; page-break-before: always; }
+.c a { color: inherit; }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .controls { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .sheet { padding: 1.2rem 1rem; }
+  .c .sig { grid-template-columns: 1fr; }
+}
+
+/* ── Print: contract only ── */
+@page {
+  size: letter;
+  margin: 0.7in 0.75in 0.75in;
+  @bottom-center {
+    content: "Aikhoje Studios · Wedding Services Agreement · Client initials: ______ / ______ · Page " counter(page) " of " counter(pages);
+    font-family: "Lato", Arial, sans-serif; font-size: 8pt; color: #6d6259;
+  }
+}
+@media print {
+  body { background: #fff; }
+  .controls { display: none !important; }
+  .app { display: block; }
+  .preview { padding: 0; }
+  .sheet { box-shadow: none; max-width: none; padding: 0; margin: 0; }
+  .c a { text-decoration: none; }
+  .c .paylinks a { text-decoration: underline; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="controls" aria-label="Contract options">
+    <p class="brand">Aikhoje Studios</p>
+    <p class="sub">Contract Builder · private · not linked from the site</p>
+
+    <div class="toolbar">
+      <button type="button" class="primary" id="btn-print">Save as PDF</button>
+      <button type="button" id="btn-sample">Load sample</button>
+      <button type="button" id="btn-clear">New contract</button>
+    </div>
+    <p class="hint" style="margin:-.4rem 0 1rem">Save as PDF opens your browser's print window. Choose "Save as PDF", then upload the file to DocuSeal and add the signature and initial fields.</p>
+
+    <div class="sum" id="sum" aria-live="polite"></div>
+
+    <form id="f" autocomplete="off">
+      <fieldset>
+        <legend>Couple</legend>
+        <div class="row">
+          <div><label for="c1">Client 1</label><input id="c1" type="text"></div>
+          <div><label for="c2">Client 2</label><input id="c2" type="text"></div>
+        </div>
+        <label for="addr">Mailing address</label><input id="addr" type="text">
+        <div class="row">
+          <div><label for="emails">Email(s)</label><input id="emails" type="text"></div>
+          <div><label for="phones">Phone(s)</label><input id="phones" type="text"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Wedding day</legend>
+        <div class="row">
+          <div><label for="wdate">Wedding date</label><input id="wdate" type="date"></div>
+          <div><label for="edate">Contract date</label><input id="edate" type="date"></div>
+        </div>
+        <label for="cer">Ceremony venue &amp; address</label><input id="cer" type="text">
+        <label for="rec">Reception venue &amp; address</label><input id="rec" type="text">
+        <label for="other">Other locations</label><input id="other" type="text">
+        <div class="row">
+          <div><label for="tstart">Coverage start</label><input id="tstart" type="time"></div>
+          <div><label for="tend">Coverage end</label><input id="tend" type="time"></div>
+        </div>
+        <div class="row">
+          <div><label for="guests">Guest count</label><input id="guests" type="number" min="0"></div>
+          <div><label for="contact">Day-of contact &amp; phone</label><input id="contact" type="text"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Region</legend>
+        <select id="region" aria-label="Region">
+          <option value="I">I · Coastal Carolina &amp; Virginia (travel included)</option>
+          <option value="II">II · The Triangle &amp; Wilmington</option>
+          <option value="III">III · Destination (Charlotte, DC, Charlottesville)</option>
+          <option value="custom">Other / custom region (travel quoted)</option>
+          <option value="beyond">Beyond six hours &amp; worldwide (travel quoted)</option>
+        </select>
+        <div id="travel-wrap" hidden>
+          <label for="travel">Travel quote ($)</label><input id="travel" type="number" min="0" step="1">
+          <label for="regionName">Region / city name</label><input id="regionName" type="text" placeholder="e.g. Winston-Salem">
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Collection</legend>
+        <select id="coll" aria-label="Collection"></select>
+        <div class="row">
+          <div><label for="price">Collection price ($)</label><input id="price" type="number" min="0" step="1"></div>
+          <div><label for="hours">Coverage hours</label><input id="hours" type="number" min="0" step="0.5"></div>
+        </div>
+        <p class="hint" id="price-hint"></p>
+        <div id="custom-wrap" hidden>
+          <label for="crew">Crew (photographers / videographers)</label><input id="crew" type="text" placeholder="e.g. 1 photographer + 1 videographer">
+          <label for="deliv">Deliverables</label><textarea id="deliv"></textarea>
+          <label class="check"><input type="checkbox" id="customFilm"> Includes video / film deliverables</label>
+          <label class="check"><input type="checkbox" id="customTwo"> Two or more shooters</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Add-ons</legend>
+        <div id="addons"></div>
+        <p class="flag" id="addon-flag"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Notes in Section B (optional)</legend>
+        <textarea id="bnotes" placeholder="e.g. 6 rolls of 35mm included; ceremony schedule attached"></textarea>
+      </fieldset>
+
+      <details>
+        <summary>Studio settings (saved on this device)</summary>
+        <label class="check"><input type="checkbox" id="llc"> The LLC is registered (sign as Aikhoje Studios LLC)</label>
+        <label for="stripe">Stripe payment link (card / bank)</label><input id="stripe" type="url" placeholder="https://buy.stripe.com/...">
+        <label for="paypal">PayPal.me handle</label><input id="paypal" type="text" placeholder="aikhojestudios">
+        <label for="venmo">Venmo Business handle</label><input id="venmo" type="text" placeholder="AikhojeStudios">
+        <label for="zelle">Zelle email or phone</label><input id="zelle" type="text">
+        <p class="hint">Payment options left blank are left out of the contract. Venmo should be a Venmo Business profile; Venmo's terms don't allow business payments into a personal account.</p>
+      </details>
+    </form>
+  </aside>
+
+  <main class="preview">
+    <article class="sheet c" id="doc"></article>
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ───────── Price book (matches the wedding contract) ───────── */
+  const REGIONS = {
+    I:      { label: "I — Coastal Carolina & Virginia (Outer Banks · NE NC · Hampton Roads · Williamsburg · Richmond)", travel: "Travel included", col: 0 },
+    II:     { label: "II — The Triangle & Wilmington (Raleigh · Durham · Chapel Hill · Wilmington)", travel: "Travel built into the price ($250–$400)", col: 1 },
+    III:    { label: "III — Destination (Charlotte · Washington, DC · Charlottesville)", travel: "Travel built into the price ($500–$700)", col: 2 },
+    custom: { label: "Other / custom region", travel: "Travel quoted per booking", col: 0 },
+    beyond: { label: "Beyond six hours & worldwide", travel: "Custom travel quote", col: 0 }
+  };
+
+  const COLLECTIONS = [
+    { id: "elope_photo", group: "Photography", name: "Elopement & Micro-Wedding", inc: "One photographer · Up to four hours coverage · Up to 30 guests · Fully edited gallery · Online gallery + print release", prices: [1200, 1200, 1200], hours: 4, photo: true, film: false, two: false },
+    { id: "courthouse", group: "Photography", name: "Courthouse Wedding", inc: "One photographer · One hour of coverage · Fully edited gallery · Online gallery + print release", prices: [450, 600, null], hours: 1, photo: true, film: false, two: false },
+    { id: "sig_photo", group: "Photography", name: "Signature Photo", inc: "One lead photographer · Full day coverage (8 hrs) · Fully edited gallery · Online gallery · Print release", prices: [2200, 2450, 2700], hours: 8, photo: true, film: false, two: false },
+    { id: "two_photo", group: "Photography", name: "Two-Shooter Photo", inc: "Two photographers · Eight hours coverage · Fully edited gallery · Online gallery · Print release", prices: [2800, 3200, 3500], hours: 8, photo: true, film: false, two: true },
+    { id: "elope_film", group: "Videography / Film", name: "Elopement & Micro-Wedding Film", inc: "One videographer · Up to four hours coverage · Up to 30 guests · 2–3 min highlight film · Full ceremony edit · Wireless microphones for vows · Online film delivery", prices: [1200, 1200, 1200], hours: 4, photo: false, film: true, two: false, starting: true },
+    { id: "sig_film", group: "Videography / Film", name: "Signature Film", inc: "One videographer · Full day coverage (8 hrs) · 4–6 min highlight film · Full ceremony edit · Full toasts & speeches edit · Wireless microphones + backup audio recorder · Online film delivery", prices: [2600, 2850, 3100], hours: 8, photo: false, film: true, two: false },
+    { id: "two_film", group: "Videography / Film", name: "Two-Shooter Film", inc: "Two videographers · Eight hours coverage · 5–7 min highlight film · 60-second social teaser · Full ceremony edit (multi-camera) · Full toasts & speeches edit · Wireless microphones + backup audio recorder · Online film delivery", prices: [3400, 3800, 4100], hours: 8, photo: false, film: true, two: true },
+    { id: "pv", group: "Photo + Video", name: "Photo + Video", inc: "Two shooters — photo + video · Eight hours coverage · Fully edited gallery · 3–5 min highlight film · Online gallery + print release", prices: [3800, 4200, 4500], hours: 8, photo: true, film: true, two: true },
+    { id: "custom", group: "Custom", name: "Custom Collection", inc: "", prices: [null, null, null], hours: 0, photo: true, film: false, two: false }
+  ];
+
+  const ADDONS = [
+    { id: "filmphoto", name: "Film Photography (35mm / Medium Format)", desc: "Shot and developed in-house: timeless grain, rich color, one-of-a-kind originals.", price: 250, starting: true },
+    { id: "super8", name: "Super 8 / 16mm Motion Film", desc: "Vintage motion film on real Kodak stock, edited into a cinematic keepsake reel.", price: 1200, starting: true, film: true },
+    { id: "portrait", name: "Portrait Experience", desc: "Studio-lit guest portraits with on-site dye-sub printing. Guests leave with a print in hand.", price: 1800, starting: true },
+    { id: "elopefilm", name: "Elopement Film", desc: "Adds a videographer to the Elopement & Micro-Wedding collection. Includes a 2–3 min film.", price: 1200, starting: true, film: true, only: ["elope_photo"] },
+    { id: "cerfilm", name: "Full Ceremony Film", desc: "Your complete ceremony, edited start to finish from multiple angles.", price: 600, film: true },
+    { id: "toastfilm", name: "Full Toasts Film", desc: "Every toast and speech, edited in full with clean audio.", price: 400, film: true },
+    { id: "bothfilm", name: "Ceremony + Toasts Films", desc: "Both full-length films together (save $100).", price: 900, film: true },
+    { id: "second", name: "Second Photographer", desc: "Upgrades Signature Photo to two photographers for the full eight hours.", price: 600, two: true, only: ["sig_photo"] },
+    { id: "engage", name: "Engagement Session", desc: "60–90 minute session at a location of your choice. Perfect for save-the-dates.", price: 500 },
+    { id: "rehearsal", name: "Rehearsal Coverage", desc: "Two hours of coverage the night before: candid moments and toasts.", price: 450 },
+    { id: "extra", name: "Additional Coverage Hour", desc: "Extends the collection. Per hour, per photographer or videographer.", price: 350, perHour: true }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const blank = (v, w) => v ? esc(v) : `<span class="blank"${w ? ` style="min-width:${w}"` : ""}>&nbsp;</span>`;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* ───────── Build the controls ───────── */
+  const collSel = $("coll");
+  let lastGroup = null, og = null;
+  COLLECTIONS.forEach((c) => {
+    if (c.group !== lastGroup) { og = document.createElement("optgroup"); og.label = c.group; collSel.appendChild(og); lastGroup = c.group; }
+    const o = document.createElement("option"); o.value = c.id; o.textContent = c.name; og.appendChild(o);
+  });
+
+  const addonsBox = $("addons");
+  ADDONS.forEach((a) => {
+    const row = document.createElement("div");
+    row.className = "check";
+    row.dataset.addon = a.id;
+    row.innerHTML =
+      `<input type="checkbox" id="ad_${a.id}">` +
+      `<label for="ad_${a.id}" style="margin:0;color:inherit;font-size:inherit">${esc(a.name)}${a.starting ? " <span style='color:var(--muted)'>(from " + money(a.price) + ")</span>" : ""}</label>` +
+      (a.perHour ? `<input type="number" class="qty" id="adq_${a.id}" min="1" step="0.5" value="1" aria-label="Hours">` : "") +
+      `<input type="number" class="amt" id="adp_${a.id}" min="0" step="1" value="${a.price}" aria-label="${esc(a.name)} price">`;
+    addonsBox.appendChild(row);
+  });
+
+  /* ───────── State ───────── */
+  const FIELDS = ["c1","c2","addr","emails","phones","wdate","edate","cer","rec","other","tstart","tend","guests","contact","region","travel","regionName","coll","price","hours","crew","deliv","bnotes"];
+  const CHECKS = ["customFilm","customTwo"];
+  const SETTINGS = ["stripe","paypal","venmo","zelle"];
+
+  function today() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+
+  function getColl() { return COLLECTIONS.find((c) => c.id === collSel.value) || COLLECTIONS[0]; }
+  function regionKey() { return $("region").value; }
+
+  function listPrice(c, rk) {
+    const col = REGIONS[rk].col;
+    return c.prices[col];
+  }
+
+  let priceTouched = false, hoursTouched = false;
+  function applyCollectionDefaults(force) {
+    const c = getColl();
+    const p = listPrice(c, regionKey());
+    if (force || !priceTouched) $("price").value = p == null ? "" : p;
+    if (force || !hoursTouched) $("hours").value = c.hours || $("hours").value || "";
+    if (force) { priceTouched = false; hoursTouched = false; }
+  }
+
+  function syncVisibility() {
+    const rk = regionKey();
+    $("travel-wrap").hidden = !(rk === "custom" || rk === "beyond");
+    const c = getColl();
+    $("custom-wrap").hidden = c.id !== "custom";
+    const p = listPrice(c, rk);
+    let hint = "";
+    if (c.id === "custom") hint = "Enter the custom price.";
+    else if (p == null) hint = "Custom quote for this region. Enter the price.";
+    else hint = `List price for this region: ${money(p)}${c.starting ? " (starting at)" : ""}. Edit to quote higher.`;
+    if (rk === "custom" || rk === "beyond") hint += " Collection prices use the Region I rate; travel is added separately.";
+    $("price-hint").textContent = hint;
+    ADDONS.forEach((a) => {
+      const row = addonsBox.querySelector(`[data-addon="${a.id}"]`);
+      const allowed = !a.only || a.only.includes(c.id);
+      row.style.opacity = allowed ? "1" : ".45";
+      $("ad_" + a.id).disabled = !allowed;
+      if (!allowed) $("ad_" + a.id).checked = false;
+    });
+  }
+
+  function readState() {
+    const s = {};
+    FIELDS.forEach((k) => (s[k] = $(k).value.trim ? $(k).value.trim() : $(k).value));
+    CHECKS.forEach((k) => (s[k] = $(k).checked));
+    s.addons = {};
+    ADDONS.forEach((a) => {
+      s.addons[a.id] = { on: $("ad_" + a.id).checked, price: Number($("adp_" + a.id).value) || 0, qty: a.perHour ? Number($("adq_" + a.id).value) || 0 : 1 };
+    });
+    s.llc = $("llc").checked;
+    SETTINGS.forEach((k) => (s[k] = $(k).value.trim()));
+    return s;
+  }
+
+  function writeState(s) {
+    FIELDS.forEach((k) => { if (s[k] != null) $(k).value = s[k]; });
+    CHECKS.forEach((k) => { $(k).checked = !!s[k]; });
+    if (s.addons) ADDONS.forEach((a) => {
+      const v = s.addons[a.id]; if (!v) return;
+      $("ad_" + a.id).checked = !!v.on;
+      $("adp_" + a.id).value = v.price;
+      if (a.perHour) $("adq_" + a.id).value = v.qty;
+    });
+  }
+
+  /* ───────── Dates & money ───────── */
+  function parseDate(s) { if (!s) return null; const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); }
+  function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  function fmtDate(d) { return d ? d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : ""; }
+  function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+  function fmtTime(t) {
+    if (!t) return "";
+    let [h, m] = t.split(":").map(Number); const ap = h >= 12 ? "p.m." : "a.m."; h = h % 12 || 12;
+    return `${h}:${String(m).padStart(2, "0")} ${ap}`;
+  }
+
+  function compute(s) {
+    const c = COLLECTIONS.find((x) => x.id === s.coll);
+    const collPrice = Number(s.price) || 0;
+    const travel = (s.region === "custom" || s.region === "beyond") ? Number(s.travel) || 0 : 0;
+    const chosen = ADDONS.filter((a) => s.addons[a.id].on);
+    const addonLines = chosen.map((a) => {
+      const v = s.addons[a.id];
+      const amt = a.perHour ? v.price * v.qty : v.price;
+      return { a, amt, qty: v.qty, unit: v.price };
+    });
+    const addonsTotal = addonLines.reduce((t, l) => t + l.amt, 0);
+    const total = collPrice + addonsTotal + travel;
+
+    const W = parseDate(s.wdate), E = parseDate(s.edate) || new Date();
+    const days = W ? daysBetween(E, W) : null;
+    const r = Math.round(total * 0.30), p2 = Math.round(total * 0.35), fin = total - r - p2;
+    let schedule;
+    if (W && days < 21) {
+      schedule = [{ key: "full", label: "Total Contract Price", pct: "100%", amt: total, due: "Due at signing", date: E }];
+    } else if (W && days < 90) {
+      schedule = [
+        { key: "retainer", label: "Non-refundable Retainer", pct: "30%", amt: r, due: "Due at signing", date: E },
+        { key: "p2", label: "Payment 2", pct: "35%", amt: p2, due: "Due at signing (booked less than 90 days out)", date: E },
+        { key: "final", label: "Final Balance", pct: "remaining 35% plus any later add-ons", amt: fin, due: "Due 21 days before the wedding", date: addDays(W, -21) }
+      ];
+    } else {
+      schedule = [
+        { key: "retainer", label: "Non-refundable Retainer", pct: "30%", amt: r, due: "Due at signing", date: E },
+        { key: "p2", label: "Payment 2", pct: "35%", amt: p2, due: "Due 90 days before the wedding", date: W ? addDays(W, -90) : null },
+        { key: "final", label: "Final Balance", pct: "remaining 35% plus any later add-ons", amt: fin, due: "Due 21 days before the wedding", date: W ? addDays(W, -21) : null }
+      ];
+    }
+
+    const hasFilmDeliv = (c && c.film) || (c && c.id === "custom" && s.customFilm) || addonLines.some((l) => l.a.film && l.a.id !== "super8");
+    const hasPhoto = c && (c.photo || c.id === "custom");
+    const hasTwo = (c && c.two) || (c && c.id === "custom" && s.customTwo) || s.addons.second.on;
+    const hasAnalog = s.addons.filmphoto.on || s.addons.super8.on;
+    const hours = Number(s.hours) || 0;
+    return { c, collPrice, travel, addonLines, addonsTotal, total, schedule, days, W, E, hasFilmDeliv, hasPhoto, hasTwo, hasAnalog, hours };
+  }
+
+  /* ───────── Payment links ───────── */
+  function payLinks(s, amt, label, couple) {
+    const out = [];
+    const note = `Aikhoje Studios - ${couple || "Wedding"} - ${label}`;
+    const amount = amt.toFixed(2);
+    if (s.stripe && /^https:\/\//.test(s.stripe)) out.push(`<a href="${esc(s.stripe)}">Card or bank transfer (Stripe)</a>`);
+    if (s.paypal) {
+      const h = s.paypal.replace(/^@/, "").replace(/^https?:\/\/(www\.)?paypal\.me\//i, "");
+      out.push(`<a href="https://paypal.me/${encodeURIComponent(h)}/${amount}USD">PayPal</a>`);
+    }
+    if (s.venmo) {
+      const h = s.venmo.replace(/^@/, "");
+      out.push(`<a href="https://venmo.com/${encodeURIComponent(h)}?txn=pay&amp;amount=${amount}&amp;note=${encodeURIComponent(note)}">Venmo @${esc(h)}</a>`);
+    }
+    if (s.zelle) out.push(`Zelle to ${esc(s.zelle)}`);
+    return out.join(" &nbsp;·&nbsp; ");
+  }
+
+  function methodsSentence(s) {
+    const m = [];
+    if (s.stripe) m.push("card or bank transfer (ACH) through Stripe");
+    if (s.paypal) m.push("PayPal");
+    if (s.venmo) m.push("Venmo (business profile @" + esc(s.venmo.replace(/^@/, "")) + ")");
+    if (s.zelle) m.push("Zelle to " + esc(s.zelle));
+    if (!m.length) return "The Studio will send a payment link or invoice for each payment. The Client may pay through that link, or by another method the Studio approves in writing.";
+    const list = m.length === 1 ? m[0] : m.slice(0, -1).join(", ") + ", or " + m[m.length - 1];
+    return `Each payment in Section C has its own payment link. The Client may pay by ${list}, or by another method the Studio approves in writing. The Studio may also send matching invoices electronically.`;
+  }
+
+  /* ───────── Contract ───────── */
+  function render() {
+    const s = readState();
+    const k = compute(s);
+    const c = k.c;
+    const couple = [s.c1, s.c2].filter(Boolean).join(" & ");
+    const studioName = s.llc ? "Aikhoje Studios LLC" : "Aigbokhai Aikhoje, sole proprietor, doing business as Aikhoje Studios";
+    const studioParty = s.llc ? "Aikhoje Studios LLC, owned and operated by Aigbokhai Aikhoje" : "Aigbokhai Aikhoje, sole proprietor, doing business as Aikhoje Studios";
+
+    /* Section numbering: only included sections get numbers, so cross-references follow. */
+    const defs = [
+      ["services", true], ["retainer", true], ["payments", true], ["balance", true], ["cancel", true],
+      ["illness", true], ["force", true], ["liability", true], ["equipment", true], ["overtime", true],
+      ["meals", k.hours >= 6], ["venue", true], ["travel", true], ["second", k.hasTwo], ["client", true],
+      ["copyright", true], ["portfolio", true], ["social", true], ["delivery", true], ["raw", true],
+      ["editing", true], ["analog", k.hasAnalog], ["contractor", true], ["law", true], ["entire", true],
+      ["sever", true], ["esign", true]
+    ];
+    const num = {}; let n = 0;
+    defs.forEach(([id, on]) => { if (on) num[id] = ++n; });
+    const S = (id) => num[id];
+    const sec = (id, title, clauses) => {
+      if (!num[id]) return "";
+      return `<h2>${num[id]}. ${title}</h2>` + clauses.map((cl, i) => `<div class="clause"><b>${num[id]}.${i + 1}</b><div>${cl}</div></div>`).join("");
+    };
+
+    const reg = REGIONS[s.region];
+    const regionLine = (s.region === "custom" || s.region === "beyond")
+      ? `${esc(reg.label)}${s.regionName ? ": " + esc(s.regionName) : ""} · ${esc(reg.travel)}`
+      : `${esc(reg.label)} · ${esc(reg.travel)}`;
+
+    let html = "";
+    html += `<h1>AIKHOJE STUDIOS</h1><p class="tag">Wedding Photography &amp; Film Services Agreement</p>`;
+    html += `<p class="contact">www.aikhojestudios.com &nbsp;·&nbsp; aikhojestudios@gmail.com &nbsp;·&nbsp; (508) 762-8168</p>`;
+    html += `<p>This Wedding Photography &amp; Film Services Agreement (the "Agreement") is made on ${blank(fmtDate(k.E))} (the "Effective Date") between:</p>`;
+    html += `<table class="parties"><tr><th>Studio</th><th>Client(s)</th></tr><tr><td>${esc(studioParty)}<br>Email: aikhojestudios@gmail.com<br>Phone: (508) 762-8168<br>("Studio," "we," "us")</td>
+      <td>Client 1: ${blank(s.c1)}<br>Client 2: ${blank(s.c2)}<br>Mailing address: ${blank(s.addr)}<br>Email(s): ${blank(s.emails)}<br>Phone(s): ${blank(s.phones)}<br>("Client," "you")</td></tr></table>`;
+
+    // A. Event details
+    const coverage = s.tstart || s.tend ? `Start: ${blank(fmtTime(s.tstart), "5rem")} &nbsp; End: ${blank(fmtTime(s.tend), "5rem")}` : `Start: ${blank("", "5rem")} &nbsp; End: ${blank("", "5rem")}`;
+    html += `<h2>A. Event Details</h2><table><tr><th style="width:38%">Item</th><th>Details</th></tr>
+      <tr><td>Wedding date</td><td>${blank(fmtDate(k.W))}</td></tr>
+      <tr><td>Ceremony venue &amp; address</td><td>${blank(s.cer)}</td></tr>
+      <tr><td>Reception venue &amp; address</td><td>${blank(s.rec)}</td></tr>
+      <tr><td>Other location(s) (getting ready, portraits, etc.)</td><td>${blank(s.other)}</td></tr>
+      <tr><td>Coverage start / end time</td><td>${coverage}</td></tr>
+      <tr><td>Total contracted coverage hours</td><td>${k.hours ? esc(k.hours) + " hours" : blank("", "4rem") + " hours"}</td></tr>
+      <tr><td>Estimated guest count</td><td>${blank(s.guests, "4rem")}</td></tr>
+      <tr><td>Day-of contact (planner or trusted person) &amp; phone</td><td>${blank(s.contact)}</td></tr></table>`;
+
+    // B. Package
+    const collInc = c.id === "custom"
+      ? `Crew: ${blank(s.crew)} · Coverage hours: ${k.hours || blank("", "3rem")}${s.deliv ? "<br>Deliverables: " + esc(s.deliv) : ""}`
+      : esc(c.inc);
+    html += `<h2>B. Package</h2>`;
+    html += `<p><b>Region:</b> ${regionLine}</p>`;
+    html += `<table><tr><th style="width:28%">Collection</th><th>Inclusions</th><th class="num" style="width:16%">Price</th></tr>
+      <tr><td>${esc(c.name)}</td><td>${collInc}</td><td class="num">${k.collPrice ? money(k.collPrice) : "$________"}</td></tr></table>`;
+    if (k.addonLines.length) {
+      html += `<h3>Enhancements / Add-ons</h3><table><tr><th style="width:28%">Add-on</th><th>Description</th><th class="num" style="width:16%">Price</th></tr>` +
+        k.addonLines.map((l) => `<tr><td>${esc(l.a.name)}</td><td>${esc(l.a.desc)}${l.a.perHour ? ` (${l.qty} × ${money(l.unit)})` : ""}</td><td class="num">${money(l.amt)}</td></tr>`).join("") +
+        `</table>`;
+    } else {
+      html += `<p class="note">No add-ons selected.</p>`;
+    }
+    if (s.bnotes) html += `<p><b>Notes:</b> ${esc(s.bnotes)}</p>`;
+    html += `<p class="note">All collections include full editing and color grading. Traditional ceremonies, welcome events, and multi-day weddings are quoted as one custom collection and described in an attached schedule.</p>`;
+    html += `<p class="initials">Client initials (package and price): ______ / ______</p>`;
+
+    // C. Fees & payment summary
+    html += `<h2>C. Fees &amp; Payment Summary</h2><table><tr><th>Item</th><th class="num" style="width:22%">Amount</th></tr>
+      <tr><td>Selected collection: ${esc(c.name)} (region ${esc(s.region === "custom" || s.region === "beyond" ? (s.regionName || reg.label) : s.region)})</td><td class="num">${money(k.collPrice)}</td></tr>
+      <tr><td>Add-ons</td><td class="num">${money(k.addonsTotal)}</td></tr>
+      ${k.travel ? `<tr><td>Travel quote</td><td class="num">${money(k.travel)}</td></tr>` : ""}
+      <tr class="strong"><td>TOTAL CONTRACT PRICE</td><td class="num">${money(k.total)}</td></tr></table>`;
+    html += `<table><tr><th>Payment</th><th style="width:30%">Due</th><th class="num" style="width:16%">Amount</th></tr>` +
+      k.schedule.map((p) => {
+        const links = payLinks(s, p.amt, p.label, couple);
+        const when = p.date ? (p.due.startsWith("Due at signing") ? p.due : `${p.due}, on ${fmtDate(p.date)}`) : p.due + ", on ____ / ____ / 20____";
+        return `<tr><td><b>${esc(p.label)}</b> (${esc(p.pct)})${links ? `<div class="paylinks">Pay: ${links}</div>` : ""}</td><td>${esc(when)}</td><td class="num">${money(p.amt)}</td></tr>`;
+      }).join("") + `</table>`;
+
+    html += `<p class="center" style="margin-top:1.2rem;font-weight:700;color:var(--brown);letter-spacing:.06em">TERMS AND CONDITIONS</p>`;
+
+    // 1. Services
+    const deliv = [];
+    if (k.hasPhoto) {
+      deliv.push("Sneak peek: the Studio sends a sneak peek of 10–15 edited images, usually within about a week");
+      deliv.push("Fully edited photo gallery: within 4 weeks, often sooner; about 50–75 edited images per hour of coverage (an estimate, not a guarantee)");
+    }
+    if (k.hasFilmDeliv) deliv.push("All films (highlight films, social teaser, ceremony and toasts edits, Elopement Film, as booked): within 4 weeks, often sooner");
+    if (s.addons.filmphoto.on) deliv.push("Film photography (35mm / Medium Format) scans: within 4 weeks");
+    if (s.addons.super8.on) deliv.push("Super 8 / 16mm reels: within 4 weeks after the processed film comes back from the lab, usually within 8 weeks of the wedding");
+    if (s.addons.engage.on) deliv.push("Engagement session gallery: within 2 weeks of the session");
+    if (s.addons.portrait.on) deliv.push("Portrait Experience: prints are made on site during the event; digital guest portrait files are delivered in a private online gallery within 2 weeks");
+    html += sec("services", "Services and Deliverables", [
+      `The Studio will provide the wedding photography and/or film coverage described in the selected collection and add-ons in Sections A–C (the "Services"). The Studio will provide full editing and color grading for every collection.`,
+      `<b>Delivery timelines.</b> Deliverables and estimated delivery timelines, measured from the wedding date:<ul>${deliv.map((d) => `<li>${d}</li>`).join("")}</ul>`,
+      `Timelines are good-faith estimates and may be extended during peak season or because of events covered by Sections ${S("illness")} and ${S("force")}. The Studio will tell the Client about any expected delay.`
+    ]);
+
+    html += sec("retainer", "Retainer and Date Reservation", [
+      `The date is reserved only after the Studio receives both this signed Agreement and the retainer. The retainer is thirty percent (30%) of the Total Contract Price (the "Retainer"). Until both are received, the date stays open to other clients.`,
+      `The Retainer is NON-REFUNDABLE. It pays the Studio for reserving the date, turning away other bookings, and planning work. It is not a security deposit. The Retainer is credited toward the Total Contract Price. Exceptions appear only in Sections ${S("illness")} and ${S("force")}.`
+    ]);
+
+    html += sec("payments", "Payment Schedule", [
+      `The Client will pay the Total Contract Price in three payments: (a) the Retainer, thirty percent (30%), due at signing; (b) Payment 2, thirty-five percent (35%), due ninety (90) days before the wedding; and (c) the Final Balance, the remaining thirty-five percent (35%) plus any add-ons ordered after signing, due twenty-one (21) days before the wedding. If the Agreement is signed less than 90 days before the wedding, the Retainer and Payment 2 are both due at signing. If it is signed less than 21 days before the wedding, the full Total Contract Price is due at signing. The amounts and dates for this booking are listed in Section C.`,
+      `${methodsSentence(s)} The Studio absorbs all card processing fees, and the Client is never charged a surcharge. The Studio will send a receipt for every payment.`,
+      `Any add-on or extra coverage requested after signing will be added to the Final Balance by a written amendment or an updated invoice. Overtime arranged on the wedding day is invoiced after the wedding and is due within 7 days of the invoice.`
+    ]);
+
+    html += sec("balance", "Balance Due Before Coverage", [
+      `The Studio does not charge late fees. The Studio will send a friendly reminder if a payment is past due. The Total Contract Price must be paid in full before coverage begins on the wedding day, and the Studio is not required to begin coverage until it has been paid.`
+    ]);
+
+    html += sec("cancel", "Cancellation and Rescheduling by the Client", [
+      `<b>Cancellation.</b> The Client may cancel only by written notice (email is fine). The cancellation date is the date the Studio receives the notice. The Retainer is never refunded. Payments made beyond the Retainer are handled as follows. These amounts are a reasonable estimate of the Studio's lost income, because the date becomes harder to rebook as the wedding gets closer:<ul><li>180 days or more before the wedding: all payments beyond the Retainer are refunded in full</li><li>90 to 179 days before the wedding: 50% of payments beyond the Retainer are refunded</li><li>Fewer than 90 days before the wedding: no refund of any payments made</li></ul>`,
+      `In every case, the Client does not owe any payment that was not yet due on the cancellation date. The Studio will issue any refund within 30 days.`,
+      `<b>Rescheduling.</b> The Client may reschedule once at no charge to a new date within 12 months of the original wedding date, subject to the Studio's availability. The request must be made in writing. All payments, including the Retainer, transfer to the new date, and the contracted price is honored. If the new date is in a different region, or the coverage changes, the price will be adjusted under Section B. If the Studio is not available on any date the Client proposes within that 12-month window, the change is treated as a cancellation under Section ${S("cancel")}.1, using the date of the reschedule request. Any further reschedule is treated as a new booking at the Studio's current rates, with credit for all payments already made.`,
+      `<b>Changes.</b> Changes to the venue, region, or coverage time must be confirmed in writing and may change the price under Section B.`
+    ]);
+
+    html += sec("illness", "Photographer Illness, Injury, or Emergency", [
+      `If the lead photographer or videographer cannot attend because of illness, injury, a family emergency, or a similar cause, the Studio will make reasonable efforts to send a qualified, comparable replacement from its professional network. The Studio will still edit and deliver the work in its usual style when possible.`,
+      `If no suitable replacement can be found, or the Client reasonably declines the replacement offered, the Studio will refund all payments received, including the Retainer. The Studio's liability is limited to that refund.`
+    ]);
+
+    html += sec("force", "Force Majeure", [
+      `Neither party is liable for failing to perform because of events beyond its reasonable control, including severe weather, hurricanes, flooding, natural disaster, fire, public-health orders, government action, venue closure, war, or civil unrest ("Force Majeure"). The affected party must notify the other promptly.`,
+      `If a Force Majeure event prevents the wedding from taking place on the contracted date, the parties will first try to reschedule. All payments, including the Retainer, transfer to a new date within 12 months, with no rescheduling fee. This does not use up the Client's one free reschedule under Section ${S("cancel")}.3. If no date within 12 months works for both parties, the Studio keeps the Retainer and refunds all other payments.`,
+      `If a Force Majeure event affects only the Studio (for example, the Studio cannot reach the venue) and the wedding goes ahead without the Studio, Section ${S("illness")} applies and the Studio will refund all payments, including the Retainer.`
+    ]);
+
+    html += sec("liability", "Limitation of Liability", [
+      `To the fullest extent permitted by law, the Studio's total liability for any claim arising out of this Agreement, whatever its cause, will not exceed the total amount the Client has paid to the Studio under this Agreement. The Studio is not liable for indirect, incidental, consequential, or emotional-distress damages.`,
+      `The Studio is not responsible for images or footage that cannot be captured because of venue restrictions, guest interference, schedule delays, lighting conditions, weather, or the Client's failure to follow the agreed timeline.`
+    ]);
+
+    html += sec("equipment", "Equipment and File Failure", [
+      `The Studio uses professional equipment, carries backup camera bodies, lenses, and lighting, records to dual memory cards where the equipment supports it, and keeps duplicate backups of files until delivery.`,
+      `In the rare case of equipment malfunction, file corruption, lab or processing error${k.hasAnalog ? " (including film photography or motion film stock)" : ""}, or loss of files in transit, the Studio's liability is limited as described in Sections ${S("liability")} and ${S("equipment")}.3.`,
+      `If the loss is partial, the Studio will deliver all surviving work and refund a pro-rated portion of the fee that reasonably reflects the lost coverage. If the loss is total, the Studio's liability is limited to a refund of all amounts paid.`
+    ]);
+
+    html += sec("overtime", "Overtime and Additional Coverage", [
+      `Coverage begins and ends at the times stated in Section A. If the Client asks for coverage beyond the contracted hours and the Studio agrees, overtime is billed at $350 per hour, per photographer or videographer (the "Additional Coverage Hour" rate). Overtime is billed in 30-minute increments at a prorated rate. If the schedule runs late through no fault of the Studio, coverage still ends at the contracted end time unless overtime is approved.`
+    ]);
+
+    html += sec("meals", "Meals for Vendors", [
+      `For coverage of 6 hours or more, the Client will provide a hot meal and non-alcoholic drink for each member of the Studio team. The meal may be the guest meal or a comparable vendor meal. It should be served when the guests are served, so the team can be back in place before toasts and first dances. Mealtime counts as coverage time.`
+    ]);
+
+    html += sec("venue", "Venue Rules and Restrictions", [
+      `The Client is responsible for getting any permits, venue permissions, or location fees the coverage requires, and for telling the Studio about all venue or officiant restrictions (for example: no flash, no movement during the ceremony, restricted areas, drone rules, or vendor curfews) at least 14 days before the wedding.`,
+      `The Studio will follow all venue and officiant rules. The Studio is not responsible for coverage that is limited or missed because of those rules.`
+    ]);
+
+    let travel1, travel2;
+    if (s.region === "I") {
+      travel1 = `The price in Section B includes travel to the Coastal Carolina &amp; Virginia region.`;
+      travel2 = `That price includes all of the Studio's travel costs: mileage, tolls, ferries, parking, and any overnight lodging the Studio needs. The Studio books its own lodging. The Client will not be billed separately for travel.`;
+    } else if (s.region === "II" || s.region === "III") {
+      travel1 = `The price in Section B includes travel to the ${s.region === "II" ? "Triangle &amp; Wilmington" : "Destination"} region (${s.region === "II" ? "$250–$400" : "$500–$700"} built into the regional price).`;
+      travel2 = `That price includes all of the Studio's travel costs: mileage, tolls, ferries, parking, and any overnight lodging the Studio needs. The Studio books its own lodging. The Client will not be billed separately for travel.`;
+    } else if (s.region === "custom") {
+      travel1 = `This wedding is outside the Studio's listed regions, so travel is quoted for this booking and stated in Section C${s.travel ? ` (${money(k.travel)})` : ""}.`;
+      travel2 = `The travel quote covers all of the Studio's travel costs: mileage, tolls, ferries, parking, and any overnight lodging the Studio needs. The Studio books its own lodging. The Client will not be billed separately for travel.`;
+    } else {
+      travel1 = `This wedding is more than six hours from the Studio, so it receives a custom travel quote, stated in Section C${s.travel ? ` (${money(k.travel)})` : ""}.`;
+      travel2 = `The custom travel quote includes airfare, lodging, ground transportation, and similar costs. The Client will not be billed separately for travel.`;
+    }
+    html += sec("travel", "Travel and Lodging", [travel1, travel2]);
+
+    let secondText;
+    if (c.id === "two_photo") secondText = "The Two-Shooter Photo collection includes two photographers for eight hours.";
+    else if (c.id === "two_film") secondText = "The Two-Shooter Film collection includes two videographers for eight hours.";
+    else if (c.id === "pv") secondText = "The Photo + Video collection includes two shooters, one for photo and one for video.";
+    else if (s.addons.second.on) secondText = "The Second Photographer add-on upgrades Signature Photo to two photographers for the full eight hours.";
+    else secondText = "This booking includes more than one photographer or videographer, as described in Section B.";
+    html += sec("second", "Second Shooter", [
+      `${secondText} The Studio chooses, trains, and directs any second shooter or assistant, who works under the Studio's direction and editing standards. All of their work is covered by Section ${S("copyright")}.`
+    ]);
+
+    html += sec("client", "Client Responsibilities: Shot List and Timeline", [
+      `At least 30 days before the wedding, the Client will complete the Studio's planning questionnaire. It includes a final day-of timeline, addresses, vendor contacts, a family-formal shot list with names, and any cultural or religious traditions to be documented. The Studio will use the shot list as a guide but cannot guarantee every listed photo, especially if the timeline runs behind.`,
+      `The Client will choose a family member or friend to help gather people for group photos. The Client will also allow enough time in the schedule for portraits.`
+    ]);
+
+    html += sec("copyright", "Copyright and License", [
+      `The Studio owns the copyright in all photographs, video footage, and films it creates, including those made by its second shooters and assistants (the "Work"). Nothing in this Agreement transfers copyright to the Client.`,
+      `After full payment, the Studio grants the Client a non-exclusive, non-transferable, perpetual license to use the Work for personal, non-commercial purposes. This includes sharing online with credit to Aikhoje Studios where practical, and making prints under the included print release. The Client may not sell or license the Work, enter it in contests, or give it to third parties (including vendors or publications) for commercial use without the Studio's written permission. The Client may not alter the Work beyond cropping for personal display, and may not apply filters that change the edit.`
+    ]);
+
+    html += sec("portfolio", "Portfolio and Marketing Use", [
+      `The Client grants the Studio the right to use the Work and the Client's names and likenesses in the Studio's portfolio, website, social media, advertising, publications, workshops, and competitions, and to submit the Work for publication.`,
+      `<b>Opt-out.</b> The Client may opt out of portfolio and marketing use by initialing one option below. Opting out does not change the price.<div class="optout"><div>☐ No restrictions &nbsp;&nbsp; Initials: ______</div><div>☐ Private: no public use of any images or film &nbsp;&nbsp; Initials: ______</div><div>☐ Limited: no images of children / no names or location tags / other: ____________________ &nbsp;&nbsp; Initials: ______</div></div>`
+    ]);
+
+    html += sec("social", "Social Media and Guest Photography", [
+      `The Client is responsible for asking guests to stay out of the aisle and the Studio's working area. An "unplugged ceremony" announcement is strongly encouraged. The Studio is not responsible for shots that are missed or blocked by guests with phones, cameras, or tablets, or by other vendors.`,
+      `Other photographers or videographers hired by the Client or guests may not interfere with the Studio's coverage. The Client will let the Studio know in advance about any other hired photographer or videographer.`,
+      `Before full delivery, the Studio may post a small number of preview images on social media unless the Client has opted out under Section ${S("portfolio")}.2.`
+    ]);
+
+    html += sec("delivery", "Delivery Method and Gallery Expiration", [
+      `Photographs are delivered as high-resolution, edited JPEG files through a private online gallery on an online gallery platform chosen by Aikhoje Studios.${k.hasFilmDeliv || s.addons.super8.on ? " Films are delivered through a private online link for streaming and download." : ""} Physical prints, albums, USB drives, and film reels are not included unless listed in Section B or added separately.`,
+      `The online gallery${k.hasFilmDeliv || s.addons.super8.on ? " and film links" : ""} will remain active for 12 months after delivery. The Client should download and back up all files right away. After they expire, the Studio does not have to keep copies. Any archival copies are kept as a courtesy, and the Studio may charge a reasonable fee to restore them.`
+    ]);
+
+    html += sec("raw", "Raw Files", [
+      `The Studio does not deliver unedited images, RAW files, raw video footage, or film negatives. Only the final edited Work is delivered.${k.hasAnalog ? " Film photography negatives and original motion film stay with the Studio as part of its archive. The Client receives high-resolution scans and digital transfers." : ""}`
+    ]);
+
+    html += sec("editing", "Editing Style and Artistic Discretion", [
+      `The Client has reviewed the Studio's portfolio and is hiring the Studio for its editorial, documentary, and artistic style. The Studio has full creative discretion over posing, composition, image selection, editing, color grading, music licensing, and film structure. Dissatisfaction with artistic style or judgment is not grounds for a refund.`,
+      `Standard editing includes color and exposure correction and light retouching. Extensive retouching (for example, body reshaping or object removal) is not included and may be quoted separately.${k.hasFilmDeliv || s.addons.super8.on ? " For each film, the Client may make one round of minor revision requests (for example, a song swap from the Studio's licensed library or removing a specific clip) within 14 days of delivery." : ""}`
+    ]);
+
+    const analogBits = [];
+    if (s.addons.filmphoto.on) analogBits.push("Film photography (35mm / Medium Format) is shot and developed in-house");
+    if (s.addons.super8.on) analogBits.push("Super 8 / 16mm Motion Film is shot on real Kodak stock");
+    html += sec("analog", "Film Photography", [
+      `${analogBits.join(". ")}. Film is an analog medium. Grain, light leaks, color shifts, and other variations are part of its character and are not defects. Film is especially sensitive to equipment, stock, and processing problems, so Section ${S("equipment")} applies. The number of rolls or minutes of film included will be stated in Section B or on the invoice.`
+    ]);
+
+    html += sec("contractor", "Independent Contractor", [
+      `The Studio is an independent contractor and not an employee, partner, or agent of the Client. The Studio controls the manner and means of its work and is responsible for its own taxes, equipment, and any personnel it hires.`
+    ]);
+
+    html += sec("law", "Governing Law and Disputes", [
+      `This Agreement is governed by the laws of the State of North Carolina, without regard to its conflict-of-laws rules. The parties will first try in good faith to resolve any dispute informally. Any legal action will be brought in the state courts located in Pasquotank County, North Carolina, and the parties consent to that venue. Each party will pay its own attorney fees and costs.`
+    ]);
+
+    html += sec("entire", "Entire Agreement and Amendments", [
+      `This Agreement, including Sections A–C and any attached custom quote or schedule, is the entire agreement between the parties and replaces all earlier proposals, pricing guides, emails, and conversations. It may be changed only in a writing signed or e-signed by both parties.`
+    ]);
+
+    html += sec("sever", "Severability", [
+      `If a court finds any part of this Agreement invalid or unenforceable, that part will be enforced to the maximum extent allowed and the rest of the Agreement stays in full effect.`
+    ]);
+
+    html += sec("esign", "Electronic Signatures and Counterparts", [
+      `The parties agree to sign this Agreement electronically through DocuSeal. Electronic signatures are as valid and binding as handwritten signatures under the North Carolina Uniform Electronic Transactions Act and the federal E-SIGN Act. This Agreement may be signed in counterparts, and electronic or PDF copies have the same effect as originals.`
+    ]);
+
+    html += `<p style="margin-top:1rem"><b>By signing below, the parties confirm they have read, understood, and agree to every term of this Agreement.</b></p>`;
+    html += `<div class="sig"><div><h4>Studio — ${esc(s.llc ? "Aikhoje Studios LLC" : "Aikhoje Studios")}</h4>
+        <p>Signature: <span class="blank" style="min-width:12rem">&nbsp;</span></p>
+        <p>Name: Aigbokhai Aikhoje</p><p>Title: ${s.llc ? "Owner / Member" : "Owner (sole proprietor, d/b/a Aikhoje Studios)"}</p>
+        <p>Date: <span class="blank" style="min-width:12rem">&nbsp;</span></p></div>
+      <div><h4>Client(s)</h4>
+        <p>Client 1 signature: <span class="blank" style="min-width:10rem">&nbsp;</span></p>
+        <p>Printed name: ${blank(s.c1, "10rem")}</p><p>Date: <span class="blank" style="min-width:10rem">&nbsp;</span></p>
+        <p>Client 2 signature: <span class="blank" style="min-width:10rem">&nbsp;</span></p>
+        <p>Printed name: ${blank(s.c2, "10rem")}</p><p>Date: <span class="blank" style="min-width:10rem">&nbsp;</span></p></div></div>`;
+
+    $("doc").innerHTML = html;
+
+    // Side summary
+    $("sum").innerHTML =
+      `<div><span>${esc(c.name)}</span><span>${money(k.collPrice)}</span></div>` +
+      (k.addonsTotal ? `<div><span>Add-ons</span><span>${money(k.addonsTotal)}</span></div>` : "") +
+      (k.travel ? `<div><span>Travel</span><span>${money(k.travel)}</span></div>` : "") +
+      `<div class="total"><span>Total</span><span>${money(k.total)}</span></div>` +
+      k.schedule.map((p) => `<div><span>${esc(p.label)}${p.date ? " · " + p.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}</span><span>${money(p.amt)}</span></div>`).join("");
+
+    const flags = [];
+    if (s.addons.cerfilm.on && s.addons.bothfilm.on || s.addons.toastfilm.on && s.addons.bothfilm.on) flags.push("Ceremony + Toasts Films already includes the single films. Remove one.");
+    if (c.id === "sig_film" || c.id === "two_film") { if (s.addons.cerfilm.on || s.addons.toastfilm.on || s.addons.bothfilm.on) flags.push("This film collection already includes full ceremony and toasts edits."); }
+    if (k.W && k.days < 0) flags.push("The wedding date is before the contract date.");
+    if (!k.W) flags.push("Add the wedding date to work out the payment due dates.");
+    $("addon-flag").textContent = flags.join(" ");
+
+    store.set("acb_draft", JSON.stringify(s));
+  }
+
+  /* ───────── Events ───────── */
+  $("f").addEventListener("input", (e) => {
+    if (e.target.id === "price") priceTouched = true;
+    if (e.target.id === "hours") hoursTouched = true;
+    if (SETTINGS.includes(e.target.id)) store.set("acb_" + e.target.id, e.target.value.trim());
+    render();
+  });
+  $("f").addEventListener("change", (e) => {
+    if (e.target.id === "coll") { applyCollectionDefaults(true); syncVisibility(); }
+    if (e.target.id === "region") { if (!priceTouched) applyCollectionDefaults(false); syncVisibility(); }
+    if (e.target.id === "llc") store.set("acb_llc", e.target.checked ? "1" : "");
+    render();
+  });
+  $("f").addEventListener("submit", (e) => e.preventDefault());
+  $("btn-print").addEventListener("click", () => window.print());
+
+  const SAMPLE = {
+    c1: "Jordan Ellis (sample)", c2: "Maya Brooks (sample)", addr: "123 Example Lane, Norfolk, VA 23510",
+    emails: "jordan@example.com, maya@example.com", phones: "(757) 555-0100",
+    wdate: "", edate: "", cer: "Sample Chapel, Virginia Beach, VA", rec: "Sample Oceanfront Hotel, Virginia Beach, VA",
+    other: "Getting ready at the hotel", tstart: "14:00", tend: "22:00", guests: "120", contact: "Sam (planner), (757) 555-0199",
+    region: "I", travel: "", regionName: "", coll: "two_photo", price: "", hours: "", crew: "", deliv: "", bnotes: "",
+    customFilm: false, customTwo: false,
+    addons: { filmphoto: { on: true, price: 250, qty: 1 }, engage: { on: true, price: 500, qty: 1 } }
+  };
+  function loadSample() {
+    clearForm();
+    const w = addDays(new Date(), 300);
+    SAMPLE.wdate = new Date(w.getTime() - w.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    SAMPLE.edate = today();
+    writeState(SAMPLE);
+    applyCollectionDefaults(true); syncVisibility(); render();
+  }
+  function clearForm() {
+    FIELDS.forEach((k) => { if (k !== "region" && k !== "coll") $(k).value = ""; });
+    CHECKS.forEach((k) => ($(k).checked = false));
+    ADDONS.forEach((a) => { $("ad_" + a.id).checked = false; $("adp_" + a.id).value = a.price; if (a.perHour) $("adq_" + a.id).value = 1; });
+    $("region").value = "I"; collSel.value = "sig_photo"; $("edate").value = today();
+    priceTouched = false; hoursTouched = false;
+    applyCollectionDefaults(true); syncVisibility();
+  }
+  $("btn-sample").addEventListener("click", loadSample);
+  $("btn-clear").addEventListener("click", () => { clearForm(); render(); });
+
+  /* ───────── Boot ───────── */
+  SETTINGS.forEach((k) => { const v = store.get("acb_" + k); if (v) $(k).value = v; });
+  $("llc").checked = store.get("acb_llc") === "1";
+  let draft = null;
+  try { draft = JSON.parse(store.get("acb_draft") || "null"); } catch (e) { draft = null; }
+  if (draft && draft.coll) {
+    writeState(draft); priceTouched = true; hoursTouched = true; syncVisibility(); render();
+  } else {
+    loadSample();
+  }
+})();
+</script>
+</body>
+</html>

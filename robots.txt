@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /studio/
 
 Sitemap: https://aikhojestudios.com/sitemap.xml
