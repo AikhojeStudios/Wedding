@@ -97,6 +97,42 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
 .c .page-break { break-before: page; page-break-before: always; }
 .c a { color: inherit; }
 
+/* ── Doc switcher, payments received, bookings ── */
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--brown); border-radius: 8px; overflow: hidden; margin-bottom: .9rem; }
+.tabs button { border: 0; border-radius: 0; background: #fff; color: var(--brown); padding: .55rem .4rem; }
+.tabs button + button { border-left: 1px solid var(--brown); }
+.tabs button[aria-pressed="true"] { background: var(--brown); color: #fff; }
+.paysel { margin-bottom: 1rem; }
+.recv { border-top: 1px dashed var(--rule); padding-top: .5rem; margin-top: .5rem; }
+.recv:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.recv .row3 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .6rem; }
+.btnrow { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+.btnrow button { padding: .4rem .7rem; font-size: .82rem; }
+.ok { color: #2f6b3a; font-size: .8rem; margin-top: .4rem; min-height: 1em; }
+
+/* ── Invoice & receipt ── */
+.c.inv-mode, .c.rct-mode { page: billing; }
+.c .bill-head { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; border-bottom: 2px solid var(--brown); padding-bottom: .8rem; margin-bottom: 1rem; }
+.c .bill-head .brandmark { font-family: var(--display); font-size: 22pt; letter-spacing: .06em; color: var(--brown); line-height: 1.1; }
+.c .bill-head .tagline { font-style: italic; color: var(--muted); font-size: 9.5pt; }
+.c .bill-head .doctype { text-align: right; }
+.c .bill-head .doctype b { display: block; font-family: var(--display); font-weight: 400; font-size: 18pt; letter-spacing: .12em; color: var(--ink); }
+.c .bill-head .doctype span { display: block; font-size: 9pt; color: var(--muted); font-variant-numeric: tabular-nums; }
+.c .meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1rem; font-size: 9.5pt; }
+.c .meta h5 { margin: 0 0 .2rem; font-size: 8pt; letter-spacing: .12em; text-transform: uppercase; color: var(--brown-soft); }
+.c .meta p { margin: 0; line-height: 1.45; }
+.c .bigamt { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: .7rem .9rem; margin: .8rem 0; font-variant-numeric: tabular-nums; break-inside: avoid; }
+.c .bigamt span { font-size: 10pt; color: var(--muted); }
+.c .bigamt b { font-family: var(--display); font-weight: 400; font-size: 20pt; color: var(--brown); }
+.c .stamp { display: inline-block; border: 2px solid #2f6b3a; color: #2f6b3a; font-weight: 700; letter-spacing: .2em; padding: .15rem .6rem; border-radius: 4px; transform: rotate(-4deg); font-size: 11pt; }
+.c .paybox { border: 1px solid var(--rule); border-radius: 6px; padding: .6rem .8rem; margin: .8rem 0; break-inside: avoid; }
+.c .paybox h5 { margin: 0 0 .35rem; font-size: 8pt; letter-spacing: .12em; text-transform: uppercase; color: var(--brown-soft); }
+.c .paybox ul { margin: .2rem 0; padding-left: 1.1rem; }
+.c .thanks { margin-top: 1.4rem; font-family: var(--display); font-size: 13pt; color: var(--brown); }
+.c .fine { font-size: 8.5pt; color: var(--muted); margin-top: 1rem; }
+.c .muted { color: var(--muted); }
+.c .placeholder { border: 1px dashed var(--rule); border-radius: 8px; padding: 2rem; text-align: center; color: var(--muted); }
+
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
   .controls { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); }
@@ -113,8 +149,16 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
     font-family: "Lato", Arial, sans-serif; font-size: 8pt; color: #6d6259;
   }
 }
+@page billing {
+  size: letter;
+  margin: 0.7in 0.75in 0.75in;
+  @bottom-center {
+    content: "Aikhoje Studios · aikhojestudios.com · aikhojestudios@gmail.com · (508) 762-8168";
+    font-family: "Lato", Arial, sans-serif; font-size: 8pt; color: #6d6259;
+  }
+}
 @media print {
-  body { background: #fff; }
+  body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .controls { display: none !important; }
   .app { display: block; }
   .preview { padding: 0; }
@@ -128,16 +172,43 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
 <div class="app">
   <aside class="controls" aria-label="Contract options">
     <p class="brand">Aikhoje Studios</p>
-    <p class="sub">Contract Builder · private · not linked from the site</p>
+    <p class="sub">Contracts, invoices &amp; receipts · private · not linked from the site</p>
+
+    <div class="tabs" role="group" aria-label="Document">
+      <button type="button" data-doc="contract" aria-pressed="true">Contract</button>
+      <button type="button" data-doc="invoice" aria-pressed="false">Invoice</button>
+      <button type="button" data-doc="receipt" aria-pressed="false">Receipt</button>
+    </div>
+
+    <div class="paysel" id="paysel-wrap" hidden>
+      <label for="payKey" style="margin-top:0">Which payment</label>
+      <select id="payKey"></select>
+      <label for="docDate">Document date</label>
+      <input id="docDate" type="date">
+    </div>
 
     <div class="toolbar">
       <button type="button" class="primary" id="btn-print">Save as PDF</button>
       <button type="button" id="btn-sample">Load sample</button>
-      <button type="button" id="btn-clear">New contract</button>
+      <button type="button" id="btn-clear">New booking</button>
     </div>
-    <p class="hint" style="margin:-.4rem 0 1rem">Save as PDF opens your browser's print window. Choose "Save as PDF", then upload the file to DocuSeal and add the signature and initial fields.</p>
+    <p class="hint" id="print-hint" style="margin:-.4rem 0 1rem">Save as PDF opens your browser's print window. Choose "Save as PDF", then upload the file to DocuSeal and add the signature and initial fields.</p>
 
     <div class="sum" id="sum" aria-live="polite"></div>
+
+    <fieldset>
+      <legend>Saved bookings</legend>
+      <select id="bookings" aria-label="Saved bookings"><option value="">— Open a saved booking —</option></select>
+      <div class="btnrow">
+        <button type="button" id="btn-save">Save booking</button>
+        <button type="button" id="btn-del">Delete</button>
+        <button type="button" id="btn-export">Download backup</button>
+        <button type="button" id="btn-import">Load backup</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+      <p class="hint">Bookings are saved in this browser only. Download a backup now and then, and load it on another computer or phone.</p>
+      <p class="ok" id="save-msg" role="status"></p>
+    </fieldset>
 
     <form id="f" autocomplete="off">
       <fieldset>
@@ -212,6 +283,21 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
       <fieldset>
         <legend>Notes in Section B (optional)</legend>
         <textarea id="bnotes" placeholder="e.g. 6 rolls of 35mm included; ceremony schedule attached"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Payments received</legend>
+        <div id="received"></div>
+        <p class="hint">Tick each payment as it comes in. Receipts and invoices use these to show what's paid and what's left.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Changes after signing</legend>
+        <label for="laterDesc" style="margin-top:0">Description</label>
+        <input id="laterDesc" type="text" placeholder="e.g. 1 extra coverage hour, Full Toasts Film">
+        <label for="laterAmt">Amount ($)</label>
+        <input id="laterAmt" type="number" min="0" step="1">
+        <p class="hint">Added to the Final Balance on invoices and receipts (Section 3.3). The signed contract stays as it was.</p>
       </fieldset>
 
       <details>
@@ -301,7 +387,28 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
   });
 
   /* ───────── State ───────── */
-  const FIELDS = ["c1","c2","addr","emails","phones","wdate","edate","cer","rec","other","tstart","tend","guests","contact","region","travel","regionName","coll","price","hours","crew","deliv","bnotes"];
+  const FIELDS = ["c1","c2","addr","emails","phones","wdate","edate","cer","rec","other","tstart","tend","guests","contact","region","travel","regionName","coll","price","hours","crew","deliv","bnotes","laterDesc","laterAmt","docDate","payKey"];
+  const PAYKEYS = [
+    { key: "retainer", label: "Retainer (30%)", code: "R" },
+    { key: "p2", label: "Payment 2 (35%)", code: "P2" },
+    { key: "final", label: "Final Balance", code: "F" },
+    { key: "full", label: "Total Contract Price (paid in full)", code: "PIF" }
+  ];
+  const METHODS = ["Stripe (card)", "Stripe (bank transfer)", "PayPal", "Venmo", "Zelle", "Check", "Cash", "Other"];
+  let docType = "contract";
+
+  const recvBox = $("received");
+  PAYKEYS.forEach((p) => {
+    const d = document.createElement("div");
+    d.className = "recv"; d.dataset.key = p.key;
+    d.innerHTML =
+      `<label class="check" style="margin:0"><input type="checkbox" id="rv_on_${p.key}"> <b>${p.label}</b> received</label>` +
+      `<div class="row3"><div><label for="rv_date_${p.key}">Date paid</label><input id="rv_date_${p.key}" type="date"></div>` +
+      `<div><label for="rv_amt_${p.key}">Amount ($)</label><input id="rv_amt_${p.key}" type="number" min="0" step="0.01"></div></div>` +
+      `<div class="row3"><div><label for="rv_method_${p.key}">Method</label><select id="rv_method_${p.key}">${METHODS.map((m) => `<option>${m}</option>`).join("")}</select></div>` +
+      `<div><label for="rv_ref_${p.key}">Reference / transaction #</label><input id="rv_ref_${p.key}" type="text"></div></div>`;
+    recvBox.appendChild(d);
+  });
   const CHECKS = ["customFilm","customTwo"];
   const SETTINGS = ["stripe","paypal","venmo","zelle"];
 
@@ -353,6 +460,11 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
     ADDONS.forEach((a) => {
       s.addons[a.id] = { on: $("ad_" + a.id).checked, price: Number($("adp_" + a.id).value) || 0, qty: a.perHour ? Number($("adq_" + a.id).value) || 0 : 1 };
     });
+    s.received = {};
+    PAYKEYS.forEach((p) => {
+      s.received[p.key] = { on: $("rv_on_" + p.key).checked, date: $("rv_date_" + p.key).value, amt: $("rv_amt_" + p.key).value, method: $("rv_method_" + p.key).value, ref: $("rv_ref_" + p.key).value.trim() };
+    });
+    s.docType = docType;
     s.llc = $("llc").checked;
     SETTINGS.forEach((k) => (s[k] = $(k).value.trim()));
     return s;
@@ -367,6 +479,15 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
       $("adp_" + a.id).value = v.price;
       if (a.perHour) $("adq_" + a.id).value = v.qty;
     });
+    PAYKEYS.forEach((p) => {
+      const v = (s.received && s.received[p.key]) || {};
+      $("rv_on_" + p.key).checked = !!v.on;
+      $("rv_date_" + p.key).value = v.date || "";
+      $("rv_amt_" + p.key).value = v.amt || "";
+      $("rv_method_" + p.key).value = v.method || METHODS[0];
+      $("rv_ref_" + p.key).value = v.ref || "";
+    });
+    if (s.docType) setDoc(s.docType, true);
   }
 
   /* ───────── Dates & money ───────── */
@@ -448,6 +569,126 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
     if (!m.length) return "The Studio will send a payment link or invoice for each payment. The Client may pay through that link, or by another method the Studio approves in writing.";
     const list = m.length === 1 ? m[0] : m.slice(0, -1).join(", ") + ", or " + m[m.length - 1];
     return `Each payment in Section C has its own payment link. The Client may pay by ${list}, or by another method the Studio approves in writing. The Studio may also send matching invoices electronically.`;
+  }
+
+  /* ───────── Invoices & receipts ───────── */
+  function billSchedule(s, k) {
+    // Contract schedule, with later changes added to the last payment.
+    const later = Number(s.laterAmt) || 0;
+    return k.schedule.map((p, i) => {
+      const last = i === k.schedule.length - 1;
+      const amt = p.amt + (last ? later : 0);
+      const rv = s.received[p.key] || {};
+      const paidAmt = rv.on ? (rv.amt === "" || rv.amt == null ? amt : Number(rv.amt) || 0) : 0;
+      return Object.assign({}, p, { amt, base: p.amt, later: last ? later : 0, rv, paidAmt });
+    });
+  }
+  function docNumber(prefix, s, key) {
+    const d = s.wdate ? s.wdate.replace(/-/g, "") : "TBD";
+    const ini = [s.c1, s.c2].filter(Boolean).map((n) => n.trim().charAt(0).toUpperCase()).join("") || "X";
+    const code = (PAYKEYS.find((p) => p.key === key) || {}).code || "X";
+    return `${prefix}-AS-${d}-${ini}-${code}`;
+  }
+  function billHead(kind, number, rows) {
+    return `<div class="bill-head"><div><div class="brandmark">AIKHOJE STUDIOS</div><div class="tagline">Love written in light</div></div>` +
+      `<div class="doctype"><b>${kind}</b><span>${esc(number)}</span>${rows.map((r) => `<span>${r}</span>`).join("")}</div></div>`;
+  }
+  function billMeta(s, couple, firstTitle) {
+    const venues = [s.cer, s.rec].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
+    return `<div class="meta">` +
+      `<div><h5>${firstTitle}</h5><p>${couple ? esc(couple) : blank("")}</p>${s.emails ? `<p>${esc(s.emails)}</p>` : ""}${s.phones ? `<p>${esc(s.phones)}</p>` : ""}${s.addr ? `<p>${esc(s.addr)}</p>` : ""}</div>` +
+      `<div><h5>Wedding</h5><p>${s.wdate ? fmtDate(parseDate(s.wdate)) : "Date to be confirmed"}</p>${venues.map((v) => `<p>${esc(v)}</p>`).join("")}</div>` +
+      `<div><h5>From</h5><p>${s.llc ? "Aikhoje Studios LLC" : "Aikhoje Studios"}</p><p>Aigbokhai Aikhoje</p><p>aikhojestudios@gmail.com</p><p>(508) 762-8168</p></div>` +
+      `</div>`;
+  }
+  function packageLine(s, k) {
+    const parts = [k.c ? k.c.name : "Wedding collection"];
+    k.addonLines.forEach((l) => parts.push(l.a.name + (l.a.perHour ? ` (${l.qty} hr)` : "")));
+    return parts.map(esc).join(" · ");
+  }
+
+  function renderInvoice(s, k, couple) {
+    const sched = billSchedule(s, k);
+    const p = sched.find((x) => x.key === s.payKey) || sched[0];
+    const contractTotal = k.total + (Number(s.laterAmt) || 0);
+    const paidBefore = sched.filter((x) => x.key !== p.key).reduce((t, x) => t + x.paidAmt, 0);
+    const dueNow = p.amt;
+    const after = Math.max(0, contractTotal - paidBefore - dueNow);
+    const issued = parseDate(s.docDate) || new Date();
+    const dueText = p.date ? fmtDate(p.date) : p.due;
+    const number = docNumber("INV", s, p.key);
+
+    let rows = `<tr><td><b>${esc(p.label)}</b> (${esc(p.pct)})<br><span class="muted">${packageLine(s, k)}</span></td><td class="num">${money(p.base)}</td></tr>`;
+    if (p.later) rows += `<tr><td><b>Changes after signing</b> (Section 3.3)<br><span class="muted">${esc(s.laterDesc || "Added services")}</span></td><td class="num">${money(p.later)}</td></tr>`;
+
+    const links = payLinks(s, dueNow, p.label, couple);
+    const already = p.rv.on;
+
+    return billHead("INVOICE", number, [`Issued ${fmtDate(issued)}`, `Due ${esc(dueText)}`]) +
+      billMeta(s, couple, "Bill to") +
+      `<table><thead><tr><th>Description</th><th class="num">Amount</th></tr></thead><tbody>${rows}` +
+      `<tr class="strong"><td>Amount due${p.date ? " by " + fmtDate(p.date) : ""}</td><td class="num">${money(dueNow)}</td></tr></tbody></table>` +
+      (already ? `<p><span class="stamp">PAID</span> &nbsp;<span class="muted">This payment was received${p.rv.date ? " on " + fmtDate(parseDate(p.rv.date)) : ""}. Thank you.</span></p>` : "") +
+      `<h3>Account summary</h3><table><tbody>` +
+      `<tr><td>Total Contract Price${s.laterAmt ? " (including changes after signing)" : ""}</td><td class="num">${money(contractTotal)}</td></tr>` +
+      `<tr><td>Paid to date</td><td class="num">${money(paidBefore)}</td></tr>` +
+      `<tr><td>This invoice</td><td class="num">${money(dueNow)}</td></tr>` +
+      `<tr class="strong"><td>Balance after this payment</td><td class="num">${money(after)}</td></tr></tbody></table>` +
+      (already ? "" :
+        `<div class="paybox"><h5>How to pay</h5>` +
+        (links ? `<p class="paylinks">${links}</p>` : `<p>Reply to this invoice and the Studio will send a secure payment link.</p>`) +
+        `<p class="fine" style="margin-top:.4rem">Please include “${esc(couple || "your names")} – ${esc(p.label)}” with your payment. There is no extra fee for paying by card or bank transfer. Payments are due by the date shown, as set out in your Wedding Services Agreement.</p></div>`) +
+      `<p class="thanks">Thank you, ${esc([s.c1, s.c2].filter(Boolean).map((n) => n.split(" ")[0]).join(" & ") || "friends")}. It's an honor to tell your story.</p>` +
+      `<p class="fine">This invoice is issued under the Wedding Services Agreement between ${esc(couple || "the Client")} and ${s.llc ? "Aikhoje Studios LLC" : "Aigbokhai Aikhoje d/b/a Aikhoje Studios"}. Questions? Email aikhojestudios@gmail.com or call (508) 762-8168.</p>`;
+  }
+
+  function renderReceipt(s, k, couple) {
+    const sched = billSchedule(s, k);
+    const p = sched.find((x) => x.key === s.payKey) || sched[0];
+    if (!p.rv.on) {
+      return `<div class="placeholder"><p><b>${esc(p.label)}</b> isn't marked as received yet.</p><p>Tick it under “Payments received” on the left, add the date and method, and the receipt will appear here.</p></div>`;
+    }
+    const contractTotal = k.total + (Number(s.laterAmt) || 0);
+    const paidToDate = sched.reduce((t, x) => t + x.paidAmt, 0);
+    const remaining = Math.max(0, contractTotal - paidToDate);
+    const paidOn = parseDate(p.rv.date) || parseDate(s.docDate) || new Date();
+    const number = docNumber("RCT", s, p.key);
+    const upcoming = sched.filter((x) => !x.rv.on);
+
+    return billHead("RECEIPT", number, [`Issued ${fmtDate(parseDate(s.docDate) || new Date())}`]) +
+      billMeta(s, couple, "Received from") +
+      `<div class="bigamt"><span>Amount paid &nbsp;<span class="stamp">PAID</span></span><b>${money(p.paidAmt)}</b></div>` +
+      `<table><tbody>` +
+      `<tr><td style="width:38%">Payment for</td><td><b>${esc(p.label)}</b> (${esc(p.pct)})<br><span class="muted">${packageLine(s, k)}</span>${p.later ? `<br><span class="muted">Includes changes after signing: ${esc(s.laterDesc || "added services")} (${money(p.later)})</span>` : ""}</td></tr>` +
+      `<tr><td>Date paid</td><td>${fmtDate(paidOn)}</td></tr>` +
+      `<tr><td>Method</td><td>${esc(p.rv.method)}</td></tr>` +
+      (p.rv.ref ? `<tr><td>Reference</td><td>${esc(p.rv.ref)}</td></tr>` : "") +
+      `</tbody></table>` +
+      `<h3>Account summary</h3><table><tbody>` +
+      `<tr><td>Total Contract Price${s.laterAmt ? " (including changes after signing)" : ""}</td><td class="num">${money(contractTotal)}</td></tr>` +
+      `<tr><td>Paid to date (including this payment)</td><td class="num">${money(paidToDate)}</td></tr>` +
+      `<tr class="strong"><td>Remaining balance</td><td class="num">${money(remaining)}</td></tr></tbody></table>` +
+      (remaining <= 0
+        ? `<p><b>Paid in full — thank you!</b></p>`
+        : (upcoming.length ? `<h3>Upcoming payments</h3><table><thead><tr><th>Payment</th><th>Due</th><th class="num">Amount</th></tr></thead><tbody>` +
+            upcoming.map((x) => `<tr><td>${esc(x.label)}</td><td>${x.date ? fmtDate(x.date) : esc(x.due)}</td><td class="num">${money(x.amt)}</td></tr>`).join("") +
+            `</tbody></table><p class="fine">You'll get an invoice with a payment link before each due date.</p>` : "")) +
+      (p.key === "retainer" ? `<p class="fine">The retainer secures your wedding date and is non-refundable, as set out in your Wedding Services Agreement.</p>` : "") +
+      `<p class="thanks">Thank you, ${esc([s.c1, s.c2].filter(Boolean).map((n) => n.split(" ")[0]).join(" & ") || "friends")}!</p>` +
+      `<p class="fine">Keep this receipt for your records. Questions? Email aikhojestudios@gmail.com or call (508) 762-8168.</p>`;
+  }
+
+  function syncPayKeys(k) {
+    const sel = $("payKey");
+    const keys = k.schedule.map((p) => p.key);
+    [...sel.options].forEach((o) => { const on = keys.includes(o.value); o.hidden = !on; o.disabled = !on; });
+    if (!keys.includes(sel.value)) sel.value = keys[0];
+    PAYKEYS.forEach((p) => {
+      const row = recvBox.querySelector(`[data-key="${p.key}"]`);
+      const sp = k.schedule.find((x) => x.key === p.key);
+      row.hidden = !sp;
+      if (sp) $("rv_amt_" + p.key).placeholder = String(sp.amt);
+    });
   }
 
   /* ───────── Contract ───────── */
@@ -707,7 +948,20 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
         <p>Client 2 signature: <span class="blank" style="min-width:10rem">&nbsp;</span></p>
         <p>Printed name: ${blank(s.c2, "10rem")}</p><p>Date: <span class="blank" style="min-width:10rem">&nbsp;</span></p></div></div>`;
 
-    $("doc").innerHTML = html;
+    syncPayKeys(k);
+    s.payKey = $("payKey").value;
+    const docEl = $("doc");
+    docEl.className = "sheet c" + (docType === "invoice" ? " inv-mode" : docType === "receipt" ? " rct-mode" : "");
+    if (docType === "invoice") {
+      docEl.innerHTML = renderInvoice(s, k, couple);
+      document.title = `Invoice ${docNumber("INV", s, s.payKey)} – ${couple || "Aikhoje Studios"}`;
+    } else if (docType === "receipt") {
+      docEl.innerHTML = renderReceipt(s, k, couple);
+      document.title = `Receipt ${docNumber("RCT", s, s.payKey)} – ${couple || "Aikhoje Studios"}`;
+    } else {
+      docEl.innerHTML = html;
+      document.title = `Wedding Services Agreement – ${couple || "Aikhoje Studios"}`;
+    }
 
     // Side summary
     $("sum").innerHTML =
@@ -761,7 +1015,9 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
     applyCollectionDefaults(true); syncVisibility(); render();
   }
   function clearForm() {
-    FIELDS.forEach((k) => { if (k !== "region" && k !== "coll") $(k).value = ""; });
+    FIELDS.forEach((k) => { if (k !== "region" && k !== "coll" && k !== "payKey") $(k).value = ""; });
+    PAYKEYS.forEach((p) => { $("rv_on_" + p.key).checked = false; $("rv_date_" + p.key).value = ""; $("rv_amt_" + p.key).value = ""; $("rv_method_" + p.key).value = METHODS[0]; $("rv_ref_" + p.key).value = ""; });
+    $("docDate").value = today(); $("bookings").value = "";
     CHECKS.forEach((k) => ($(k).checked = false));
     ADDONS.forEach((a) => { $("ad_" + a.id).checked = false; $("adp_" + a.id).value = a.price; if (a.perHour) $("adq_" + a.id).value = 1; });
     $("region").value = "I"; collSel.value = "sig_photo"; $("edate").value = today();
@@ -771,7 +1027,95 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--brown); font
   $("btn-sample").addEventListener("click", loadSample);
   $("btn-clear").addEventListener("click", () => { clearForm(); render(); });
 
+  /* ───────── Document tabs ───────── */
+  const HINTS = {
+    contract: "Save as PDF opens your browser's print window. Choose \"Save as PDF\", then upload the file to DocuSeal and add the signature and initial fields.",
+    invoice: "Pick the payment, then Save as PDF and email it to the couple. The payment links in the PDF are clickable.",
+    receipt: "Tick the payment as received on the left (date, method, reference), then Save as PDF and email it to the couple."
+  };
+  function setDoc(t, quiet) {
+    docType = HINTS[t] ? t : "contract";
+    document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.doc === docType)));
+    $("paysel-wrap").hidden = docType === "contract";
+    $("print-hint").textContent = HINTS[docType];
+    if (docType !== "contract" && !$("docDate").value) $("docDate").value = today();
+    if (!quiet) render();
+  }
+  document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => setDoc(b.dataset.doc)));
+  $("payKey").innerHTML = PAYKEYS.map((p) => `<option value="${p.key}">${esc(p.label)}</option>`).join("");
+  $("payKey").addEventListener("change", render);
+  $("docDate").addEventListener("input", render);
+  PAYKEYS.forEach((p) => $("rv_on_" + p.key).addEventListener("change", (e) => {
+    if (e.target.checked && !$("rv_date_" + p.key).value) $("rv_date_" + p.key).value = today();
+  }));
+
+  /* ───────── Saved bookings ───────── */
+  function getBookings() { try { return JSON.parse(store.get("acb_bookings") || "{}") || {}; } catch (e) { return {}; } }
+  function putBookings(b) { store.set("acb_bookings", JSON.stringify(b)); }
+  function bookingId(s) { return ([s.c1, s.c2].filter(Boolean).join(" & ") || "Untitled") + " · " + (s.wdate || "date TBD"); }
+  function refreshBookings(selected) {
+    const b = getBookings();
+    const ids = Object.keys(b).sort((x, y) => (b[x].wdate || "9999").localeCompare(b[y].wdate || "9999"));
+    $("bookings").innerHTML = `<option value="">— Open a saved booking —</option>` + ids.map((id) => `<option value="${esc(id)}">${esc(id)}</option>`).join("");
+    $("bookings").value = selected && b[selected] ? selected : "";
+  }
+  let msgTimer = null, pendingDelete = null;
+  function say(t) { $("save-msg").textContent = t; clearTimeout(msgTimer); msgTimer = setTimeout(() => { $("save-msg").textContent = ""; pendingDelete = null; $("btn-del").textContent = "Delete"; }, 6000); }
+  function openBooking(s) {
+    clearForm(); writeState(s); priceTouched = true; hoursTouched = true; syncVisibility(); render();
+  }
+  $("btn-save").addEventListener("click", () => {
+    const s = readState();
+    SETTINGS.forEach((k) => delete s[k]); delete s.llc;
+    const id = bookingId(s);
+    const b = getBookings(); b[id] = s; putBookings(b);
+    refreshBookings(id); say(`Saved “${id}”.`);
+  });
+  $("bookings").addEventListener("change", () => {
+    const id = $("bookings").value; if (!id) return;
+    const s = getBookings()[id]; if (!s) return;
+    openBooking(s); $("bookings").value = id; say(`Opened “${id}”.`);
+  });
+  $("btn-del").addEventListener("click", () => {
+    const id = $("bookings").value;
+    if (!id) { say("Open a saved booking first."); return; }
+    if (pendingDelete !== id) { pendingDelete = id; $("btn-del").textContent = "Tap again to delete"; say(`Delete “${id}”? Tap Delete again to confirm.`); return; }
+    const b = getBookings(); delete b[id]; putBookings(b);
+    pendingDelete = null; $("btn-del").textContent = "Delete";
+    refreshBookings(""); say(`Deleted “${id}”. The form still shows it until you start a new booking.`);
+  });
+  $("btn-export").addEventListener("click", () => {
+    const b = getBookings();
+    const n = Object.keys(b).length;
+    if (!n) { say("No saved bookings yet. Save one first."); return; }
+    const blob = new Blob([JSON.stringify({ app: "aikhoje-contract-builder", version: 1, exported: new Date().toISOString(), bookings: b }, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = `aikhoje-bookings-${today()}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    say(`Downloaded ${n} booking${n === 1 ? "" : "s"}.`);
+  });
+  $("btn-import").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", () => {
+    const f = $("importFile").files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const data = JSON.parse(r.result);
+        const inc = data && data.bookings && typeof data.bookings === "object" ? data.bookings : null;
+        if (!inc) throw new Error("bad");
+        const b = getBookings(); let n = 0;
+        Object.keys(inc).forEach((id) => { if (inc[id] && inc[id].coll) { b[id] = inc[id]; n++; } });
+        putBookings(b); refreshBookings(""); say(`Loaded ${n} booking${n === 1 ? "" : "s"} from the backup.`);
+      } catch (e) { say("That file isn't a Contract Builder backup."); }
+      $("importFile").value = "";
+    };
+    r.readAsText(f);
+  });
+
   /* ───────── Boot ───────── */
+  refreshBookings("");
+  $("docDate").value = today();
   SETTINGS.forEach((k) => { const v = store.get("acb_" + k); if (v) $(k).value = v; });
   $("llc").checked = store.get("acb_llc") === "1";
   let draft = null;
