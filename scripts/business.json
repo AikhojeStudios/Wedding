@@ -1,0 +1,135 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "Photographer",
+        "LocalBusiness"
+      ],
+      "@id": "https://aikhojestudios.com/#business",
+      "name": "Aikhoje Studios",
+      "url": "https://aikhojestudios.com/",
+      "image": "https://aikhojestudios.com/images/og.jpg",
+      "email": "aikhojestudios@gmail.com",
+      "telephone": "+1-508-762-8168",
+      "alternateName": "Aikhoje Studios Wedding Photography & Film",
+      "description": "Editorial and documentary wedding photography and film studio led by Aigbokhai Aikhoje. Weddings and elopements across the Outer Banks, Hampton Roads and coastal North Carolina, available worldwide.",
+      "foundingDate": "2015",
+      "founder": {
+        "@type": "Person",
+        "name": "Aigbokhai Aikhoje",
+        "jobTitle": "Wedding photographer and filmmaker"
+      },
+      "hasMap": "https://maps.google.com/?cid=2370023642542401137",
+      "sameAs": [
+        "https://maps.google.com/?cid=2370023642542401137",
+        "https://www.instagram.com/aikhojestudios/",
+        "https://www.facebook.com/AikhojeStudios/"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressRegion": "NC",
+        "addressCountry": "US"
+      },
+      "areaServed": [
+        {
+          "@type": "Place",
+          "name": "Outer Banks, North Carolina"
+        },
+        {
+          "@type": "Place",
+          "name": "Hampton Roads, Virginia"
+        },
+        {
+          "@type": "City",
+          "name": "Virginia Beach, Virginia"
+        },
+        {
+          "@type": "State",
+          "name": "North Carolina"
+        },
+        {
+          "@type": "State",
+          "name": "Virginia"
+        },
+        {
+          "@type": "Place",
+          "name": "Worldwide"
+        }
+      ],
+      "knowsAbout": [
+        "Wedding photography",
+        "Elopement photography",
+        "Wedding films",
+        "Wedding videography",
+        "Film photography",
+        "Portrait photography"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Photography services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Wedding photography"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Elopement photography"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Wedding film"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Engagement photography"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Portrait photography"
+            }
+          }
+        ]
+      },
+      "slogan": "Love written in light."
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://aikhojestudios.com/#website",
+      "url": "https://aikhojestudios.com/",
+      "name": "Aikhoje Studios",
+      "publisher": {
+        "@id": "https://aikhojestudios.com/#business"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://aikhojestudios.com/#webpage",
+      "url": "https://aikhojestudios.com/",
+      "name": "Aikhoje Studios — Love written in light | Wedding Photographer, Coastal NC",
+      "description": "Aikhoje Studios — editorial and documentary wedding photography and film on the East Coast and worldwide, from coastal North Carolina to Hampton Roads and beyond. In business since 2015.",
+      "isPartOf": {
+        "@id": "https://aikhojestudios.com/#website"
+      },
+      "about": {
+        "@id": "https://aikhojestudios.com/#business"
+      },
+      "inLanguage": "en-US"
+    }
+  ]
+}
