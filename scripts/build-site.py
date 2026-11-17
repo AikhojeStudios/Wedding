@@ -298,7 +298,7 @@ def head(title, desc, path, schema, og_image="/images/og.jpg", og_alt="Couple on
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
-<link rel="canonical" href="{url}">
+{"" if robots.startswith("noindex") else f'<link rel="canonical" href="{url}">'}
 <meta name="robots" content="{robots}">
 <meta name="theme-color" content="#1e291b">
 <meta name="geo.region" content="US-NC">

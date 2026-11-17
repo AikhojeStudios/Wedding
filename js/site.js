@@ -127,6 +127,15 @@
     prevBtn.addEventListener("click", function () { show(idx - 1); });
     nextBtn.addEventListener("click", function () { show(idx + 1); });
     lb.addEventListener("click", function (e) { if (e.target === lb) close(); });
+    /* Swipe left/right on phones (the arrow buttons are hidden there). */
+    var sx = null, sy = null;
+    lb.addEventListener("touchstart", function (e) { if (e.touches.length === 1) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
+    lb.addEventListener("touchend", function (e) {
+      if (sx === null) return;
+      var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+      sx = sy = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) show(dx < 0 ? idx + 1 : idx - 1);
+    }, { passive: true });
     document.addEventListener("keydown", function (e) {
       if (lb.hidden) return;
       if (e.key === "Escape") { e.preventDefault(); close(); }
