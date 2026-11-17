@@ -6,6 +6,34 @@
   font-display: swap;
   src: url("/fonts/libre-caslon-display-latin.woff2") format("woff2");
 }
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("/fonts/newsreader-italic-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("/fonts/instrument-sans-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dm-mono-latin.woff2") format("woff2");
+}
 
 :root {
   --forest: #1e291b;
