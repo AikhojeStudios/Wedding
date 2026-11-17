@@ -286,7 +286,7 @@ VERIFICATION = """<meta name="google-site-verification" content="oZkggRjuqXnjA4Z
 <meta name="p:domain_verify" content="dbae2caff80e14e75b3591723e6bc5b6"/>"""
 
 
-def head(title, desc, path, schema, og_image="/images/og.jpg", og_alt="Couple on the beach at golden hour, photographed by Aikhoje Studios", extra="", robots="index, follow"):
+def head(title, desc, path, schema, og_image="/images/og-autumn-couple.jpg", og_alt="Groom in a white tuxedo and bride in a lace gown holding hands under autumn trees, photographed by Aikhoje Studios", extra="", robots="index, follow"):
     url = SITE + path
     blocks = "\n".join(
         f'<script type="application/ld+json">\n{json.dumps(s, indent=2, ensure_ascii=False)}\n</script>' for s in schema
@@ -763,7 +763,7 @@ def area_page(a):
     hero = PHOTOS[a["hero"]]
     hero_tall = hero["width"] / hero["height"] < 1
     hero_width = "min(440px, 100%)" if hero_tall else "min(760px, 100%)"
-    body = f"""{head(a["title"], a["desc"], "/" + a["slug"] + "/", [schema], og_image=large(a["hero"]) if False else "/images/og.jpg")}{header("places")}
+    body = f"""{head(a["title"], a["desc"], "/" + a["slug"] + "/", [schema], og_image=large(a["hero"]) if False else "/images/og-autumn-couple.jpg")}{header("places")}
 <main id="content">
 
 <section class="title-page area" aria-labelledby="page-title">
