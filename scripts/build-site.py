@@ -31,7 +31,7 @@ YEAR = "2026"
 EMAIL = "aikhojestudios@gmail.com"
 # Google Apps Script web app that emails inquiries from the studio Gmail and logs them to a Sheet
 # (see scripts/inquiry-apps-script.gs). Leave empty to send through FormSubmit only.
-FORM_ENDPOINT = ""
+FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbzXs5tRDZtOgf0inEaoASbIggt1pdCpdmecaGwiDWfbaV5UC27YLhSe--WmG1gX-Ac39w/exec"
 PHONE = "+15087628168"
 PHONE_SHOWN = "(508) 762-8168"
 
