@@ -505,7 +505,7 @@ footer a:hover { color: var(--gold); }
   <p class="section-eyebrow">Get in Touch</p>
   <h2 class="cta-h2">Ready to make your<br>listing <em>unforgettable?</em></h2>
   <p class="cta-sub">Serving coastal North Carolina and beyond &nbsp;&middot;&nbsp; 24-hour delivery &nbsp;&middot;&nbsp; Bookings confirmed within a few hours</p>
-  <form id="booking-form" class="booking-form" action="https://formsubmit.co/ajax/aikhojestudios@gmail.com" method="POST">
+  <form id="booking-form" class="booking-form" action="https://formsubmit.co/ajax/aikhojestudios@gmail.com" data-endpoint="" method="POST">
     <input type="hidden" name="_subject" value="New real estate booking request">
     <input type="hidden" name="_captcha" value="false">
     <input type="hidden" name="_template" value="table">
@@ -612,12 +612,23 @@ document.addEventListener('keydown', function(e) {
     if (!data.Services) data.Services = 'Not specified';
     btn.disabled = true; btn.textContent = 'Sending\u2026';
     status.className = 'form-status'; status.textContent = '';
-    fetch(form.action, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    .then(function (r) { return r.json(); })
+    data._page = location.href.split('#')[0];
+    // Studio Google Apps Script first (emails from the studio Gmail + logs to a Sheet); FormSubmit as fallback.
+    var post = function (url, body, plain) {
+      var ctl = 'AbortController' in window ? new AbortController() : null;
+      var t = setTimeout(function () { if (ctl) ctl.abort(); }, 15000);
+      return fetch(url, {
+        method: 'POST',
+        headers: plain ? { 'Content-Type': 'text/plain;charset=utf-8' } : { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined
+      }).then(function (r) { return r.json(); }).finally(function () { clearTimeout(t); });
+    };
+    var viaFormSubmit = function () {
+      var fs = {}; Object.keys(data).forEach(function (k) { if (k !== '_page') fs[k] = data[k]; });
+      return post(form.action, fs, false);
+    };
+    var ep = form.getAttribute('data-endpoint');
+    (ep ? post(ep, data, true).then(function (d) { return d && d.success === true ? d : viaFormSubmit(); }).catch(viaFormSubmit) : viaFormSubmit())
     .then(function (res) {
       if (res.success === true || res.success === 'true') {
         status.className = 'form-status success';

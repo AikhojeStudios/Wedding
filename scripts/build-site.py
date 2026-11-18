@@ -29,6 +29,9 @@ SITE = "https://aikhojestudios.com"
 TODAY = "2026-11-17"
 YEAR = "2026"
 EMAIL = "aikhojestudios@gmail.com"
+# Google Apps Script web app that emails inquiries from the studio Gmail and logs them to a Sheet
+# (see scripts/inquiry-apps-script.gs). Leave empty to send through FormSubmit only.
+FORM_ENDPOINT = ""
 PHONE = "+15087628168"
 PHONE_SHOWN = "(508) 762-8168"
 
@@ -365,7 +368,7 @@ def inquiry(chapter_label, page_name=None):
       <h2 id="contact-title" class="title">Let’s tell <em>your story.</em></h2>
       <p class="body" style="max-width: 32rem">Tell me a little about your day. I reply to every inquiry within 24 hours.</p>
     </div>
-    <form id="inquiry-form" class="inquiry-form" action="https://formsubmit.co/ajax/{EMAIL}" method="POST">
+    <form id="inquiry-form" class="inquiry-form" action="https://formsubmit.co/ajax/{EMAIL}" data-endpoint="{FORM_ENDPOINT}" method="POST">
       <input type="hidden" name="_subject" value="{esc(subject)}">{page_field}
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_template" value="table">

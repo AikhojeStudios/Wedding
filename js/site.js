@@ -37,7 +37,34 @@
     updateBar();
   }
 
-  /* ---- Inquiry form (FormSubmit AJAX) ---- */
+  /* ---- Inquiry form ----
+     Sends to the studio's Google Apps Script (data-endpoint) first: it emails the inquiry from the
+     studio Gmail, sends the couple an auto-reply and logs it to a Sheet. If that fails or times out,
+     falls back to FormSubmit (the form's action). */
+  function postJSON(url, data, plain) {
+    var ctl = "AbortController" in window ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 15000);
+    return fetch(url, {
+      method: "POST",
+      // text/plain keeps the Apps Script request "simple" (no CORS preflight, which Apps Script can't answer).
+      headers: plain ? { "Content-Type": "text/plain;charset=utf-8" } : { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(data),
+      signal: ctl ? ctl.signal : undefined
+    })
+      .then(function (r) { return r.json(); })
+      .finally(function () { clearTimeout(timer); });
+  }
+  function sendInquiry(form, data) {
+    var ep = form.getAttribute("data-endpoint");
+    var viaFormSubmit = function () {
+      var fs = {}; Object.keys(data).forEach(function (k) { if (k !== "_page") fs[k] = data[k]; });
+      return postJSON(form.action, fs, false);
+    };
+    if (!ep) return viaFormSubmit();
+    return postJSON(ep, data, true)
+      .then(function (d) { return d && d.success === true ? d : viaFormSubmit(); })
+      .catch(viaFormSubmit);
+  }
   var form = document.getElementById("inquiry-form");
   if (form) {
     var status = document.getElementById("form-status");
@@ -52,14 +79,10 @@
       status.textContent = "";
       var data = {};
       new FormData(form).forEach(function (v, k) { data[k] = typeof v === "string" ? v.trim() : v; });
-      fetch(form.action, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(data)
-      })
-        .then(function (r) { return r.json(); })
+      data._page = location.href.split("#")[0];
+      sendInquiry(form, data)
         .then(function (d) {
-          if (d.success) {
+          if (d.success === true || d.success === "true") {
             status.className = "form-status success";
             status.textContent = "Thank you! Your inquiry has been sent. You’ll hear back within 24 hours, and a confirmation is on its way to your inbox.";
             form.reset();
