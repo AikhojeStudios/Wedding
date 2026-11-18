@@ -7,13 +7,15 @@
  *   2. sends the client an auto-reply from the studio's own Gmail,
  *   3. logs every submission to the "Website inquiries" Google Sheet.
  *
- * Setup: see scripts/INQUIRY-FORM-SETUP.md. Deploy as a web app that runs as
- * the studio account and that "Anyone" can access.
+ * Deployed as an Apps Script web app (Execute as: the studio account; Who has access: Anyone).
+ * Paste its /exec URL into FORM_ENDPOINT in scripts/build-site.py and the real-estate form.
  */
 
 var STUDIO_EMAIL = 'aikhojestudios@gmail.com';
 var STUDIO_NAME = 'Aikhoje Studios';
 var SHEET_NAME = 'Website inquiries';
+// The "Aikhoje Studios — Website inquiries" spreadsheet in the studio Google Drive.
+var SHEET_ID = '1-awmMc5HVsPIqKuG96tvDDh926bsug-HijFUIOEFoWQ';
 // Only these sites may submit (stops strangers using the endpoint from elsewhere).
 var ALLOWED_PAGES = /^https:\/\/(www\.)?aikhojestudios\.com\//;
 
@@ -102,16 +104,8 @@ function log_(subject, page, data, fields) {
   sh.appendRow(row);
 }
 
-// Uses the spreadsheet this script is attached to; creates one on first run if standalone.
 function getSheet_() {
-  var active = SpreadsheetApp.getActiveSpreadsheet();
-  if (active) return active;
-  var props = PropertiesService.getScriptProperties();
-  var id = props.getProperty('SHEET_ID');
-  if (id) return SpreadsheetApp.openById(id);
-  var ss = SpreadsheetApp.create('Aikhoje Studios — Website inquiries');
-  props.setProperty('SHEET_ID', ss.getId());
-  return ss;
+  return SpreadsheetApp.openById(SHEET_ID);
 }
 
 function json_(obj) {
