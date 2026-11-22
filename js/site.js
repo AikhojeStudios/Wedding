@@ -57,7 +57,7 @@
   function sendInquiry(form, data) {
     var ep = form.getAttribute("data-endpoint");
     var viaFormSubmit = function () {
-      var fs = {}; Object.keys(data).forEach(function (k) { if (k !== "_page") fs[k] = data[k]; });
+      var fs = {}; Object.keys(data).forEach(function (k) { if (["_page", "_t", "_website"].indexOf(k) < 0) fs[k] = data[k]; });
       return postJSON(form.action, fs, false);
     };
     if (!ep) return viaFormSubmit();
@@ -65,6 +65,7 @@
       .then(function (d) { return d && d.success === true ? d : viaFormSubmit(); })
       .catch(viaFormSubmit);
   }
+  var pageLoadedAt = Date.now();
   var form = document.getElementById("inquiry-form");
   if (form) {
     var status = document.getElementById("form-status");
@@ -80,7 +81,10 @@
       var data = {};
       new FormData(form).forEach(function (v, k) { data[k] = typeof v === "string" ? v.trim() : v; });
       data._page = location.href.split("#")[0];
-      sendInquiry(form, data)
+      data._t = Date.now() - pageLoadedAt;
+      // Spam traps: a person never fills the hidden fields or submits within two seconds of the page loading.
+      var botLike = data._honey || data._website || data._t < 2000;
+      (botLike ? Promise.resolve({ success: true }) : sendInquiry(form, data))
         .then(function (d) {
           if (d.success === true || d.success === "true") {
             status.className = "form-status success";

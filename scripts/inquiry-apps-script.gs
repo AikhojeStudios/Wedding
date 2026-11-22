@@ -23,11 +23,19 @@ function doPost(e) {
   try {
     var data = JSON.parse((e && e.postData && e.postData.contents) || '{}');
 
-    // Spam trap: real visitors never fill the hidden _honey field.
-    if (data._honey) return json_({ success: true });
+    // Spam traps: real visitors never see or fill the hidden fields.
+    if (data._honey || data._website) return json_({ success: true });
 
     var page = String(data._page || '');
     if (page && !ALLOWED_PAGES.test(page)) return json_({ success: false, error: 'origin' });
+
+    // Bot check: suspected bots get a normal "success" reply (so they move on), but no email,
+    // no auto-reply — they're only logged to the "Blocked" tab of the sheet so nothing real is lost.
+    var reasons = botReasons_(data);
+    if (reasons.length >= 2) {
+      logBlocked_(page, data, reasons);
+      return json_({ success: true });
+    }
 
     var clientEmail = String(data.email || data.Email || '').trim();
     var clientName = String(data.Name || '').trim();
@@ -45,6 +53,7 @@ function doPost(e) {
     var subject = String(data._subject || 'New inquiry from your website');
     var autoreply = String(data._autoresponse || '');
     var fields = Object.keys(data).filter(function (k) { return k.charAt(0) !== '_'; });
+    if (reasons.length) subject = '[Check: possible spam] ' + subject;
 
     // 1. Email to the studio.
     var rows = fields.map(function (k) {
@@ -57,8 +66,8 @@ function doPost(e) {
     var text = fields.map(function (k) { return k + ': ' + data[k]; }).join('\n');
     GmailApp.sendEmail(STUDIO_EMAIL, subject, text, { htmlBody: html, replyTo: clientEmail, name: 'Website · ' + clientName });
 
-    // 2. Auto-reply to the client, from the studio's own Gmail.
-    if (autoreply) {
+    // 2. Auto-reply to the client, from the studio's own Gmail (skipped if anything looked off).
+    if (autoreply && !reasons.length) {
       GmailApp.sendEmail(clientEmail, 'Thank you for reaching out to ' + STUDIO_NAME, autoreply, {
         name: STUDIO_NAME,
         replyTo: STUDIO_EMAIL
@@ -73,6 +82,51 @@ function doPost(e) {
     console.error(err);
     return json_({ success: false, error: 'server' });
   }
+}
+
+/**
+ * Signs that a submission came from a bot rather than a couple or an agent. Two or more = blocked;
+ * one = still delivered, but flagged in the subject and no auto-reply is sent.
+ */
+function botReasons_(data) {
+  var r = [];
+  var t = Number(data._t);
+  if (!t) r.push('no timing (posted without the page)');
+  else if (t < 3000) r.push('filled in under 3 seconds');
+
+  var name = String(data.Name || '');
+  if (gibberish_(name)) r.push('random-letter name');
+
+  var textKeys = ['Ceremony Location', 'About Their Day', 'Brokerage', 'Property Address', 'Notes'];
+  if (textKeys.some(function (k) { return gibberish_(String(data[k] || '')); })) r.push('random-letter text');
+
+  ['Wedding Date', 'Preferred Shoot Date'].forEach(function (k) {
+    var m = String(data[k] || '').match(/^(\d{4})-\d{2}-\d{2}$/);
+    if (m && Number(m[1]) < new Date().getFullYear() - 1) r.push('date in the distant past');
+  });
+
+  var local = String(data.email || '').split('@')[0];
+  if ((local.match(/\./g) || []).length >= 3) r.push('dotted throwaway email');
+  return r;
+}
+
+// One long "word" of letters that flips between upper and lower case many times, e.g. KnAGfzUdBsXgqs.
+function gibberish_(s) {
+  s = s.trim();
+  if (s.length < 10 || /\s/.test(s) || !/^[A-Za-z]+$/.test(s)) return false;
+  var flips = 0;
+  for (var i = 1; i < s.length; i++) {
+    if ((s[i] === s[i].toUpperCase()) !== (s[i - 1] === s[i - 1].toUpperCase())) flips++;
+  }
+  return flips >= 5;
+}
+
+function logBlocked_(page, data, reasons) {
+  var ss = getSheet_();
+  var sh = ss.getSheetByName('Blocked') || ss.insertSheet('Blocked');
+  if (!sh.getLastRow()) { sh.appendRow(['Received', 'Page', 'Why', 'Submission']); sh.setFrozenRows(1); }
+  var fields = Object.keys(data).filter(function (k) { return k.charAt(0) !== '_'; });
+  sh.appendRow([new Date(), page, reasons.join('; '), fields.map(function (k) { return k + ': ' + data[k]; }).join('\n')]);
 }
 
 // Visiting the web app URL in a browser shows this, which confirms the deployment is live.
@@ -124,6 +178,7 @@ function testSetup() {
     _subject: 'TEST – inquiry form setup',
     _page: 'https://aikhojestudios.com/',
     _autoresponse: 'This is the auto-reply couples will receive.',
+    _t: 30000,
     Name: 'TEST – setup check',
     email: STUDIO_EMAIL,
     'About Their Day': 'If you can read this, the new inquiry form works.'

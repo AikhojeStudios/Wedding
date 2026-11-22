@@ -26,7 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 HERE = Path(__file__).resolve().parent
 SITE = "https://aikhojestudios.com"
-TODAY = "2026-11-17"
+TODAY = "2026-11-22"
 YEAR = "2026"
 EMAIL = "aikhojestudios@gmail.com"
 # Google Apps Script web app that emails inquiries from the studio Gmail and logs them to a Sheet
@@ -374,6 +374,7 @@ def inquiry(chapter_label, page_name=None):
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_autoresponse" value="Thank you for reaching out to Aikhoje Studios! I’ve received your inquiry and will get back to you within 24 hours. In the meantime, feel free to reply to this email with anything else you’d like me to know about your day. — Aigbokhai, Aikhoje Studios">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label>Website <input type="text" name="_website" tabindex="-1" autocomplete="off"></label></div>
       <div class="form-row">
         <div class="field"><label for="inquiry-name">Your name</label><input id="inquiry-name" name="Name" type="text" autocomplete="name" required maxlength="120"></div>
         <div class="field"><label for="inquiry-email">Email</label><input id="inquiry-email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
