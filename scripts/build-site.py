@@ -26,11 +26,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 HERE = Path(__file__).resolve().parent
 SITE = "https://aikhojestudios.com"
-TODAY = "2026-11-22"
+TODAY = "2026-11-24"
 YEAR = "2026"
 EMAIL = "aikhojestudios@gmail.com"
 # Google Apps Script web app that emails inquiries from the studio Gmail and logs them to a Sheet
-# (see scripts/inquiry-apps-script.gs). Leave empty to send through FormSubmit only.
+# (see scripts/inquiry-apps-script.gs). Every site form posts here; it runs the spam filter and sends the auto-reply.
 FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbzXs5tRDZtOgf0inEaoASbIggt1pdCpdmecaGwiDWfbaV5UC27YLhSe--WmG1gX-Ac39w/exec"
 PHONE = "+15087628168"
 PHONE_SHOWN = "(508) 762-8168"
@@ -368,10 +368,8 @@ def inquiry(chapter_label, page_name=None):
       <h2 id="contact-title" class="title">Let’s tell <em>your story.</em></h2>
       <p class="body" style="max-width: 32rem">Tell me a little about your day. I reply to every inquiry within 24 hours.</p>
     </div>
-    <form id="inquiry-form" class="inquiry-form" action="https://formsubmit.co/ajax/{EMAIL}" data-endpoint="{FORM_ENDPOINT}" method="POST">
+    <form id="inquiry-form" class="inquiry-form" data-endpoint="{FORM_ENDPOINT}">
       <input type="hidden" name="_subject" value="{esc(subject)}">{page_field}
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_autoresponse" value="Thank you for reaching out to Aikhoje Studios! I’ve received your inquiry and will get back to you within 24 hours. In the meantime, feel free to reply to this email with anything else you’d like me to know about your day. — Aigbokhai, Aikhoje Studios">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label>Website <input type="text" name="_website" tabindex="-1" autocomplete="off"></label></div>

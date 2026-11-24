@@ -38,32 +38,20 @@
   }
 
   /* ---- Inquiry form ----
-     Sends to the studio's Google Apps Script (data-endpoint) first: it emails the inquiry from the
-     studio Gmail, sends the couple an auto-reply and logs it to a Sheet. If that fails or times out,
-     falls back to FormSubmit (the form's action). */
-  function postJSON(url, data, plain) {
+     Posts to the studio inquiry app (Google Apps Script, the form's data-endpoint). It runs the spam
+     filter, emails the inquiry from the studio Gmail, sends the auto-reply and logs it to a Sheet. */
+  function sendInquiry(form, data) {
     var ctl = "AbortController" in window ? new AbortController() : null;
-    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 15000);
-    return fetch(url, {
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
+    return fetch(form.getAttribute("data-endpoint"), {
       method: "POST",
-      // text/plain keeps the Apps Script request "simple" (no CORS preflight, which Apps Script can't answer).
-      headers: plain ? { "Content-Type": "text/plain;charset=utf-8" } : { "Content-Type": "application/json", "Accept": "application/json" },
+      // text/plain keeps the request "simple" (no CORS preflight, which Apps Script can't answer).
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(data),
       signal: ctl ? ctl.signal : undefined
     })
       .then(function (r) { return r.json(); })
       .finally(function () { clearTimeout(timer); });
-  }
-  function sendInquiry(form, data) {
-    var ep = form.getAttribute("data-endpoint");
-    var viaFormSubmit = function () {
-      var fs = {}; Object.keys(data).forEach(function (k) { if (["_page", "_t", "_website"].indexOf(k) < 0) fs[k] = data[k]; });
-      return postJSON(form.action, fs, false);
-    };
-    if (!ep) return viaFormSubmit();
-    return postJSON(ep, data, true)
-      .then(function (d) { return d && d.success === true ? d : viaFormSubmit(); })
-      .catch(viaFormSubmit);
   }
   var pageLoadedAt = Date.now();
   var form = document.getElementById("inquiry-form");

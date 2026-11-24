@@ -505,10 +505,8 @@ footer a:hover { color: var(--gold); }
   <p class="section-eyebrow">Get in Touch</p>
   <h2 class="cta-h2">Ready to make your<br>listing <em>unforgettable?</em></h2>
   <p class="cta-sub">Serving coastal North Carolina and beyond &nbsp;&middot;&nbsp; 24-hour delivery &nbsp;&middot;&nbsp; Bookings confirmed within a few hours</p>
-  <form id="booking-form" class="booking-form" action="https://formsubmit.co/ajax/aikhojestudios@gmail.com" data-endpoint="https://script.google.com/macros/s/AKfycbzXs5tRDZtOgf0inEaoASbIggt1pdCpdmecaGwiDWfbaV5UC27YLhSe--WmG1gX-Ac39w/exec" method="POST">
+  <form id="booking-form" class="booking-form" data-endpoint="https://script.google.com/macros/s/AKfycbzXs5tRDZtOgf0inEaoASbIggt1pdCpdmecaGwiDWfbaV5UC27YLhSe--WmG1gX-Ac39w/exec">
     <input type="hidden" name="_subject" value="New real estate booking request">
-    <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_template" value="table">
     <input type="hidden" name="_autoresponse" value="Thanks for booking with Aikhoje Studios! I've received your request and will confirm your shoot within a few hours. Feel free to reply to this email with access notes, lockbox details, or anything else about the listing. — Aigbokhai, Aikhoje Studios">
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label>Website <input type="text" name="_website" tabindex="-1" autocomplete="off"></label></div>
@@ -596,7 +594,7 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') lbClose();
 });
 
-// Booking form (FormSubmit AJAX)
+// Booking form → studio inquiry app (Google Apps Script: spam filter, email, auto-reply, Sheet log)
 (function () {
   var pageLoadedAt = Date.now();
   var form = document.getElementById('booking-form');
@@ -615,25 +613,20 @@ document.addEventListener('keydown', function(e) {
     btn.disabled = true; btn.textContent = 'Sending\u2026';
     status.className = 'form-status'; status.textContent = '';
     data._page = location.href.split('#')[0];
-    // Studio Google Apps Script first (emails from the studio Gmail + logs to a Sheet); FormSubmit as fallback.
-    var post = function (url, body, plain) {
-      var ctl = 'AbortController' in window ? new AbortController() : null;
-      var t = setTimeout(function () { if (ctl) ctl.abort(); }, 15000);
-      return fetch(url, {
-        method: 'POST',
-        headers: plain ? { 'Content-Type': 'text/plain;charset=utf-8' } : { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined
-      }).then(function (r) { return r.json(); }).finally(function () { clearTimeout(t); });
-    };
-    var viaFormSubmit = function () {
-      var fs = {}; Object.keys(data).forEach(function (k) { if (['_page', '_t', '_website'].indexOf(k) < 0) fs[k] = data[k]; });
-      return post(form.action, fs, false);
-    };
     data._t = Date.now() - pageLoadedAt;
     // Spam traps: a person never fills the hidden fields or submits within two seconds of the page loading.
     var botLike = data._honey || data._website || data._t < 2000;
-    var ep = form.getAttribute('data-endpoint');
-    (botLike ? Promise.resolve({ success: true }) : ep ? post(ep, data, true).then(function (d) { return d && d.success === true ? d : viaFormSubmit(); }).catch(viaFormSubmit) : viaFormSubmit())
+    var send = function () {
+      var ctl = 'AbortController' in window ? new AbortController() : null;
+      var t = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
+      return fetch(form.getAttribute('data-endpoint'), {
+        method: 'POST',
+        // text/plain keeps the request "simple" (no CORS preflight, which Apps Script can't answer).
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data), signal: ctl ? ctl.signal : undefined
+      }).then(function (r) { return r.json(); }).finally(function () { clearTimeout(t); });
+    };
+    (botLike ? Promise.resolve({ success: true }) : send())
     .then(function (res) {
       if (res.success === true || res.success === 'true') {
         status.className = 'form-status success';
