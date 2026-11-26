@@ -82,7 +82,7 @@ FILTERS = [
 
 # Order of the full gallery (every photo in photos.json appears once).
 GALLERY_ORDER = [
-    "window-bride-veil", "196", "dscf0309", "film-beach-kiss-bw", "untitled-23", "vineyard-kiss-closeup",
+    "window-bride-veil", "196", "dscf0309", "flower-girls-yellow-roses", "film-beach-kiss-bw", "untitled-23", "vineyard-kiss-closeup",
     "dscf0031", "dscf0552-2", "trix400_2017-08-22-0020", "mirror-steps", "film-hands-color", "7",
     "petals-getting-ready", "altar-portrait", "dscf0604", "untitled-31", "film-couple-mountains", "dscf0500",
     "dscf0048", "church-steps-bw", "pink-phone-booth", "wedding-380", "untitled-84-2", "aw-197",

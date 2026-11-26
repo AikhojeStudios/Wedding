@@ -505,5 +505,15 @@
    "portraits",
    "bw"
   ]
+ },
+ "flower-girls-yellow-roses": {
+  "srcset": "/images/opt/flower-girls-yellow-roses-640.webp 640w, /images/opt/flower-girls-yellow-roses-1200.webp 1200w",
+  "width": 1333,
+  "height": 2000,
+  "alt": "Flower girls in white dresses with yellow roses and baby's breath in their hair, bridesmaids in yellow behind them",
+  "tags": [
+   "ready",
+   "details"
+  ]
  }
 }
